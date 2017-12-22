@@ -22,7 +22,10 @@ public class BlueAutonomous2 extends VirusMethods {
 
     public void init() {
         super.init();
+
+        gyroSensor.calibrate();
         vuforiaInit();
+        while (gyroSensor.isCalibrating());
     }
 
     public void start() {

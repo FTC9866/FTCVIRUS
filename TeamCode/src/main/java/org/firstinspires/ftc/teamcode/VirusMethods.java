@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 public abstract class VirusMethods extends VirusHardware{
     int counter=0;
@@ -156,6 +157,12 @@ public abstract class VirusMethods extends VirusHardware{
         double currentAngle = gyroSensor.getHeading();
         angleRel = relativeAngle(angle, currentAngle); //should be distance from current angle (negative if to the counterclockwise, positive if to the clockwise)
         turnRate = speed*angleRel/90;
+        if (turnRate<0){
+            turnRate-=.05;
+        }
+        else if(turnRate>0){
+            turnRate+=.05;
+        }
         runMotors(turnRate, turnRate, -turnRate, -turnRate); //negative turnRate will result in a left turn
         if (angleRel<=threshold && angleRel>=-threshold) { //approaching from either side
             return true;
@@ -269,6 +276,24 @@ public abstract class VirusMethods extends VirusHardware{
     }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    }
+    public void readVumark(){
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            // Extract the X, Y, and Z components of the offset of the target relative to the robot
+            double tX = trans.get(0);
+            double tY = trans.get(1);
+            double tZ = trans.get(2);
+
+            // Extract the rotational components of the target relative to the robot
+            double rX = rot.firstAngle;
+            double rY = rot.secondAngle;
+            double rZ = rot.thirdAngle;
+        }
     }
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
