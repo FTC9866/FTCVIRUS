@@ -136,7 +136,7 @@ public class RedAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
-                if (setMotorPositionsINCH(27-amountMovedForward,27-amountMovedForward,27-amountMovedForward,27-amountMovedForward,0.5)) {
+                if (setMotorPositionsINCH(29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,0.5)) {
                     resetEncoder();
                     state=state.turn90;
                 }

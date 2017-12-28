@@ -230,8 +230,8 @@ public abstract class VirusMethods extends VirusHardware{
         lift.setPosition(position);
     }
     public void topGrabberOpen(){
-        cube3.setPosition(.25);
-        cube4.setPosition(.75);
+        cube3.setPosition(.15);
+        cube4.setPosition(.85);
     }
     public void topGrabberClose(){
         cube3.setPosition(.6);

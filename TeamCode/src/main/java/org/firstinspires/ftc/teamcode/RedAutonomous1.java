@@ -140,18 +140,18 @@ public class RedAutonomous1 extends VirusMethods {
             case toCryptoBox:
                 lift(0.03); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(44-amountMovedForward,44-amountMovedForward,44-amountMovedForward,44-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
+                    if (setMotorPositionsINCH(46.5-amountMovedForward,46.5-amountMovedForward,46.5-amountMovedForward,46.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(36-amountMovedForward,36-amountMovedForward,36-amountMovedForward,36-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(38.5-amountMovedForward,38.5-amountMovedForward,38.5-amountMovedForward,38.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(30-amountMovedForward,30-amountMovedForward,30-amountMovedForward,30-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(32.5-amountMovedForward,32.5-amountMovedForward,32.5-amountMovedForward,32.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }

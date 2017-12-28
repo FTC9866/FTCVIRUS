@@ -47,7 +47,22 @@ public class BlueAutonomous1 extends VirusMethods {
     @Override
 
     public void loop() {
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
+            // Extract the X, Y, and Z components of the offset of the target relative to the robot
+            double tX = trans.get(0);
+            double tY = trans.get(1);
+            double tZ = trans.get(2);
+
+            // Extract the rotational components of the target relative to the robot
+            double rX = rot.firstAngle;
+            double rY = rot.secondAngle;
+            double rZ = rot.thirdAngle;
+        }
         switch (state) {
             case dropArm:
 
@@ -131,23 +146,24 @@ public class BlueAutonomous1 extends VirusMethods {
                         state=state.faceCryptoBox;
                     }
                 }
-                if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(-36-amountMovedForward,-36-amountMovedForward,-36-amountMovedForward,-36-amountMovedForward, -.5)){
+                else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
+                    if (setMotorPositionsINCH(-39.5-amountMovedForward,-39.5-amountMovedForward,-39.5-amountMovedForward,-39.5-amountMovedForward, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }
-                if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(-44-amountMovedForward,-44-amountMovedForward,-44-amountMovedForward,-44-amountMovedForward, .5)){
+                else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
+                    if (setMotorPositionsINCH(-45.5-amountMovedForward,-45.5-amountMovedForward,-45.5-amountMovedForward,-45.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
-                }else { //just in case of some weird circumstance that it forgets the VuMark
-                    if (setMotorPositionsINCH(-36,-36,-36,-36,.5)){ //parks in safe zone in front of cryptobox
-                        resetEncoder();
-                        state = state.stop;
-                    }
                 }
+//                else { //just in case of some weird circumstance that it forgets the VuMark
+////                    if (setMotorPositionsINCH(-36,-36,-36,-36,.5)){ //parks in safe zone in front of cryptobox
+////                        resetEncoder();
+////                        state = state.stop;
+////                    }
+//                }
                 break;
             case faceCryptoBox:
                 if (turn(90,.75)) {
@@ -163,6 +179,7 @@ public class BlueAutonomous1 extends VirusMethods {
                 runMotors(-0.5,-0.5,-0.5,-0.5);
                 waitTime(400);
                 runMotors(0,0,0,0);
+                lift(0);
                 state = state.stop;
                 break;
             case debug:

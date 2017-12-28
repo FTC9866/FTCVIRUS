@@ -49,13 +49,13 @@ public class Drive extends VirusMethods {
             lift.setPosition(0);
         }
         if (gamepad2.b && !gamepad2.start){
-            lift.setPosition(.3/3 + .02);
+            lift.setPosition(.22);
         }
         if (gamepad2.y){
-            lift.setPosition(.6/3 + .05);
+            lift.setPosition(.32);
         }
         if (gamepad2.x){
-            lift.setPosition(.3 + .07);
+            lift.setPosition(.4);
         }
         if (gamepad2.back){
             cryptoboxSection++;
