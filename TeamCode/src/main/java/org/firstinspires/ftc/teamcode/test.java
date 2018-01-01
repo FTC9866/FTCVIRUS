@@ -12,6 +12,13 @@ public class test extends VirusMethods{
     enum state  {goToPosition,scanJewel,knockJewelRight, knockJewelLeft, stop, debug}
     state state;
 
+
+    public void init(){
+        super.init();
+        gyroSensor.calibrate();
+        while (gyroSensor.isCalibrating());
+    }
+
     public void start(){
         lmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);

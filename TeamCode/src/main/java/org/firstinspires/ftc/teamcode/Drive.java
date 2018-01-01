@@ -17,6 +17,8 @@ public class Drive extends VirusMethods {
         topGrabberOpen();
         cube1.setPosition(0.0);
         cube2.setPosition(1);
+        glyphArm.setPosition(0);
+        glyphClaw.setPosition(1);
     }
     public void loop(){
         updateControllerValues();
@@ -34,34 +36,46 @@ public class Drive extends VirusMethods {
         if (gamepad2.left_bumper) {
             topGrabberOpen();
         }
-        if (gamepad2.right_bumper) {
+        else if (gamepad2.right_bumper) {
             topGrabberClose();
         }
         if (gamepad2.left_trigger>0.5){
             cube1.setPosition(0.0);
             cube2.setPosition(1);
         }
-        if (gamepad2.right_trigger>0.5){
+        else if (gamepad2.right_trigger>0.5){
             cube1.setPosition(.6);
             cube2.setPosition(.4);
         }
         if (gamepad2.a){
             lift.setPosition(0);
         }
-        if (gamepad2.b && !gamepad2.start){
+        else if (gamepad2.b && !gamepad2.start){
             lift.setPosition(.3/3 + .02);
         }
-        if (gamepad2.y){
+        else if (gamepad2.y){
             lift.setPosition(.6/3 + .05);
         }
-        if (gamepad2.x){
+        else if (gamepad2.x){
             lift.setPosition(.3 + .07);
         }
         if (gamepad2.back){
             cryptoboxSection++;
-
-
         }
+        if (gamepad2.dpad_left){
+            glyphClaw.setPosition(.5);
+        }
+        else if (gamepad2.dpad_up){
+            glyphArm.setPosition(.5);
+        }
+        else if (gamepad2.dpad_right){
+            glyphClaw.setPosition(1);
+        }
+        else if (gamepad2.dpad_down){
+            glyphArm.setPosition(0);
+        }
+        glyphSlide.setPower(gamepad2.right_stick_y);
+
         telemetry.addData("Bottom Grabber",GPS(true));
         telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());

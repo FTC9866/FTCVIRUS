@@ -47,7 +47,7 @@ public class BlueAutonomous1 extends VirusMethods {
     @Override
 
     public void loop() {
-
+        readVumark();
         switch (state) {
             case dropArm:
 

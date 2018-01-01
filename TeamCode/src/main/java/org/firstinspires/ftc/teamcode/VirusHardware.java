@@ -22,6 +22,10 @@ public abstract class VirusHardware extends OpMode {
     DcMotor lmotor0;
     DcMotor rmotor1;
     DcMotor lmotor1;
+    DcMotor rightLED;
+    DcMotor leftLED;
+    DcMotor glyphSlide;
+
     final double inPerPulse=.0175; //experimentally determined value
     Servo jewelKnocker;
     ColorSensor colorSensor;
@@ -30,6 +34,8 @@ public abstract class VirusHardware extends OpMode {
     Servo cube3;
     Servo cube4;
     Servo lift;
+    Servo glyphArm;
+    Servo glyphClaw;
     GyroSensor gyroSensor;
     double maxPower=1;
     double lefty;
@@ -56,6 +62,9 @@ public abstract class VirusHardware extends OpMode {
         rmotor0 = hardwareMap.dcMotor.get("rmotor0");
         lmotor1 = hardwareMap.dcMotor.get("lmotor1");
         rmotor1 = hardwareMap.dcMotor.get("rmotor1");
+        //rightLED = hardwareMap.dcMotor.get("rightLED");
+        //leftLED = hardwareMap.dcMotor.get("leftLED");
+        glyphSlide = hardwareMap.dcMotor.get("glyphSlide");
         lmotor0.setDirection(DcMotor.Direction.REVERSE);
         lmotor1.setDirection(DcMotor.Direction.REVERSE);
         lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -70,8 +79,8 @@ public abstract class VirusHardware extends OpMode {
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
         gyroSensor = hardwareMap.gyroSensor.get("gryoSensor");
-
-
+        glyphArm = hardwareMap.servo.get("glyphArm");
+        glyphClaw = hardwareMap.servo.get("glyphClaw");
     }
 
 
