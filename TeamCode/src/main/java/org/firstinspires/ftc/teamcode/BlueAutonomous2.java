@@ -121,7 +121,7 @@ public class BlueAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
-                if (setMotorPositionsINCH(-27-amountMovedForward,-27-amountMovedForward,-27-amountMovedForward,-27-amountMovedForward,-.5)){
+                if (setMotorPositionsINCH(-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-.5)){
                     resetEncoder();
                     state = state.turn90;
                 }
@@ -142,13 +142,13 @@ public class BlueAutonomous2 extends VirusMethods {
                         state=state.faceCryptoBox;
                     }
                 }
-                if (VuMarkStored == RelicRecoveryVuMark.CENTER){
+                else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
                     if (setMotorPositionsINCH(-12,-12,-12,-12, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }
-                if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
+                else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
                     if (setMotorPositionsINCH(-20,-20,-20,-20, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
