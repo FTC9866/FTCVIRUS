@@ -123,15 +123,15 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                lift(0.03); //so that cube doesn't drag on ground
+                lift(0.15); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(46.5-amountMovedForward,46.5-amountMovedForward,46.5-amountMovedForward,46.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
+                    if (setMotorPositionsINCH(45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(38.5-amountMovedForward,38.5-amountMovedForward,38.5-amountMovedForward,38.5-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(39.5-amountMovedForward,39.5-amountMovedForward,39.5-amountMovedForward,39.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
@@ -154,12 +154,25 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case placeGlyph:
-                runMotors(0.5,0.5,0.5,0.5);
-                waitTime(500);
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(1000);
                 runMotors(0,0,0,0);
                 topGrabberOpen();
-                runMotors(-0.5,-0.5,-0.5,-0.5);
-                waitTime(500);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                lift(0);
+                state = state.secondRam;
+
+                break;
+            case secondRam:
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
                 runMotors(0,0,0,0);
                 state = state.stop;
                 break;

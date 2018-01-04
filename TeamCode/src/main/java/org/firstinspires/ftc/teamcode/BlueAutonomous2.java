@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 @TeleOp(name="BlueAutonomous2", group="TeleOp")
 
 public class BlueAutonomous2 extends VirusMethods {
-    enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, turnBack, toCryptoBoxpart1, toCryptoBoxpart2, turn90, moveUntilScanned}
+    enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, turnBack, toCryptoBoxpart1, toCryptoBoxpart2, turn90, secondRam, moveUntilScanned}
     state state;
     boolean setMotor;
     boolean knock;
@@ -121,6 +121,7 @@ public class BlueAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
+                lift(0.15); //so that cube doesn't drag on ground
                 if (setMotorPositionsINCH(-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-.5)){
                     resetEncoder();
                     state = state.turn90;
@@ -167,11 +168,24 @@ public class BlueAutonomous2 extends VirusMethods {
                 }
                 break;
             case placeGlyph:
-                runMotors(0.5,0.5,0.5,0.5);
-                waitTime(500);
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(1000);
                 runMotors(0,0,0,0);
                 topGrabberOpen();
-                runMotors(-0.5,-0.5,-0.5,-0.5);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                lift(0);
+                state = state.secondRam;
+
+                break;
+            case secondRam:
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
                 state = state.stop;

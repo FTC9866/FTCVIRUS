@@ -121,6 +121,7 @@ public class RedAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
+                lift(0.15); //so that cube doesn't drag on ground
                 if (setMotorPositionsINCH(29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,0.5)) {
                     resetEncoder();
                     state=state.turn90;
@@ -164,12 +165,25 @@ public class RedAutonomous2 extends VirusMethods {
                 }
                 break;
             case placeGlyph:
-                runMotors(0.5,0.5,0.5,0.5);
-                waitTime(500);
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(1000);
                 runMotors(0,0,0,0);
                 topGrabberOpen();
-                runMotors(-0.5,-0.5,-0.5,-0.5);
-                waitTime(500);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                lift(0);
+                state = state.secondRam;
+
+                break;
+            case secondRam:
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
                 runMotors(0,0,0,0);
                 state = state.stop;
                 break;
