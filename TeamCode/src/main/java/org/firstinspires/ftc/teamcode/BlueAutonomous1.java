@@ -126,20 +126,20 @@ public class BlueAutonomous1 extends VirusMethods {
             case toCryptoBox:
                 lift(0.15); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(-32.5-amountMovedForward,-32.5-amountMovedForward,-32.5-amountMovedForward,-32.5-amountMovedForward, -.5)){
+                    if (setMotorPositionsINCH(-29.6-amountMovedForward,-29.6-amountMovedForward,-29.6-amountMovedForward,-29.6-amountMovedForward, -.5)){
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state=state.faceCryptoBox;
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(-39.5-amountMovedForward,-39.5-amountMovedForward,-39.5-amountMovedForward,-39.5-amountMovedForward, -.5)){
+                    if (setMotorPositionsINCH(-39-amountMovedForward,-39-amountMovedForward,-39-amountMovedForward,-39-amountMovedForward, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(-45.5-amountMovedForward,-45.5-amountMovedForward,-45.5-amountMovedForward,-45.5-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(-45-amountMovedForward,-45-amountMovedForward,-45-amountMovedForward,-45-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
@@ -152,7 +152,8 @@ public class BlueAutonomous1 extends VirusMethods {
 //                }
                 break;
             case faceCryptoBox:
-                if (turn(90,.75)) {
+                setThreshold(0);
+                if (turn(90,.6)) {
                     resetEncoder();
                     state=state.placeGlyph;
                 }
@@ -167,10 +168,12 @@ public class BlueAutonomous1 extends VirusMethods {
                 waitTime(400);
                 runMotors(0,0,0,0);
                 lift(0);
+
                 state = state.secondRam;
 
                 break;
             case secondRam:
+                waitTime(1000);
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);

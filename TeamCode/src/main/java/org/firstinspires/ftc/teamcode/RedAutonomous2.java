@@ -178,6 +178,7 @@ public class RedAutonomous2 extends VirusMethods {
 
                 break;
             case secondRam:
+                waitTime(1000);
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);

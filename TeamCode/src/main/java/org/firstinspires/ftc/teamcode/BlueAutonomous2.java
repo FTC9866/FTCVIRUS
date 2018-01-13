@@ -137,20 +137,20 @@ public class BlueAutonomous2 extends VirusMethods {
                 lift(0.03); //so that cube doesn't drag on ground
                 //change the motor position values as needed after testing on field
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(-4,-4,-4,-4, -.5)){
+                    if (setMotorPositionsINCH(-8.5,-8.5,-8.5,-8.5, -.5)){
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state=state.faceCryptoBox;
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(-12,-12,-12,-12, -.5)){
+                    if (setMotorPositionsINCH(-16.5,-16.5,-16.5,-16.5, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(-20,-20,-20,-20, .5)){
+                    if (setMotorPositionsINCH(-24.5,-24.5,-24.5,-24.5, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
@@ -181,6 +181,7 @@ public class BlueAutonomous2 extends VirusMethods {
 
                 break;
             case secondRam:
+                waitTime(1000);
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);

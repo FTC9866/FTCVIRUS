@@ -24,6 +24,7 @@ public abstract class VirusMethods extends VirusHardware{
     double turnRate;
     double angleRel;
     double maxDisplacement;
+    double threshold = 1;
     boolean triggered;
     int cryptoboxSection;
     String[][]cryptobox = {{"brown","gray","gray"},{"brown","brown","gray"},{"gray","brown","brown"},{"gray","gray","brown"}};
@@ -153,21 +154,23 @@ public abstract class VirusMethods extends VirusHardware{
     }
     public boolean turn(double angle, double speed){
         angle=360-angle;
-        double threshold = 1;
         double currentAngle = gyroSensor.getHeading();
         angleRel = relativeAngle(angle, currentAngle); //should be distance from current angle (negative if to the counterclockwise, positive if to the clockwise)
         turnRate = speed*angleRel/90;
         if (turnRate<0){
-            turnRate-=.05;
+            turnRate-=.025;
         }
         else if(turnRate>0){
-            turnRate+=.05;
+            turnRate+=.025;
         }
         runMotors(turnRate, turnRate, -turnRate, -turnRate); //negative turnRate will result in a left turn
         if (angleRel<=threshold && angleRel>=-threshold) { //approaching from either side
             return true;
         }
         return false;
+    }
+    public void setThreshold(int newThreshold){
+        threshold = newThreshold;
     }
     private double relativeAngle(double angle, double currentAngle){
         double currentAngleRel = angle-currentAngle;
