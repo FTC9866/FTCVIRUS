@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 
-@TeleOp(name="BlueAutonomous2", group="TeleOp")
+@Autonomous(name="BlueAutonomous2", group="Autonomous")
 
 public class BlueAutonomous2 extends VirusMethods {
     enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, turnBack, toCryptoBoxpart1, toCryptoBoxpart2, turn90, secondRam, moveUntilScanned}
@@ -37,9 +37,7 @@ public class BlueAutonomous2 extends VirusMethods {
         cube2.setPosition(1);
         topGrabberClose();
         lift.setPosition(0);
-        jewelKnocker.setPosition(0);
-        lift.setPosition(0);
-        jewelKnocker.setPosition(0);
+        jewelKnockerUp();
         state=state.dropArm;
     }
     @Override
@@ -49,7 +47,7 @@ public class BlueAutonomous2 extends VirusMethods {
         switch (state) {
             case dropArm:
 
-                jewelKnocker.setPosition(0.65);
+                jewelKnockerDown();
                 colorSensor.enableLed(true);
                 waitTime(1000);
                 resetEncoder();
@@ -70,32 +68,23 @@ public class BlueAutonomous2 extends VirusMethods {
 
             case knockJewelLeft:
                 if (turn(345, 0.7)){
-                    jewelKnocker.setPosition(0);
+                    jewelKnockerUp();
                     state=state.turnBack;
                 }
                 break;
 
             case knockJewelRight:
                 if (turn(15, 0.7)) {
-                    jewelKnocker.setPosition(0);
+                    jewelKnockerUp();
                     state = state.turnBack;
                 }
                 break;
+
             case turnBack:
                 if (turn(0, 0.7)){
                     position = lmotor0.getCurrentPosition();
                     state = state.moveUntilScanned;
                 }
-                break;
-            //turnBackLeft and turnBackRight kept just in case turnMotorsPlus method doesn't work
-            case turnBackLeft:
-                turnMotors(0, true, 0.3);
-                state = state.moveUntilScanned;
-                break;
-
-            case turnBackRight:
-                turnMotors(0, false, 0.3);
-                state = state.moveUntilScanned;
                 break;
 
             case moveUntilScanned:
@@ -107,6 +96,7 @@ public class BlueAutonomous2 extends VirusMethods {
                         state = state.alignStraight;
                     }
                 break;
+
             case alignStraight:
                 if (turn(0,1)) {
                     resetEncoder();
@@ -114,12 +104,14 @@ public class BlueAutonomous2 extends VirusMethods {
                     state = state.toCryptoBoxpart1;
                 }
                 break;
+
             case backOnStone: // broken plz fix
                 if (setMotorPositions(0,0,0,0, .5)){
                     resetEncoder();
                     state=state.toCryptoBox;
                 }
                 break;
+
             case toCryptoBoxpart1:
                 lift(0.15); //so that cube doesn't drag on ground
                 if (setMotorPositionsINCH(-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-.5)){
@@ -133,6 +125,7 @@ public class BlueAutonomous2 extends VirusMethods {
                     state = state.toCryptoBoxpart2;
                 }
                 break;
+
             case toCryptoBoxpart2:
                 lift(0.03); //so that cube doesn't drag on ground
                 //change the motor position values as needed after testing on field
@@ -144,13 +137,13 @@ public class BlueAutonomous2 extends VirusMethods {
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(-16.5,-16.5,-16.5,-16.5, -.5)){
+                    if (setMotorPositionsINCH(-15.4,-15.4,-15.4,-15.4, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }
                 else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(-24.5,-24.5,-24.5,-24.5, -.5)){
+                    if (setMotorPositionsINCH(-23.5,-23.5,-23.5,-23.5, -.5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }

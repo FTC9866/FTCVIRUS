@@ -277,6 +277,12 @@ public abstract class VirusMethods extends VirusHardware{
             return "Right";
         }
     }
+    public void jewelKnockerUp(){
+        jewelKnocker.setPosition(.1);
+    }
+    public void jewelKnockerDown(){
+        jewelKnocker.setPosition(0.66);
+    }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }

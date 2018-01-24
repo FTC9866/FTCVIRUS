@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
@@ -25,7 +26,7 @@ public abstract class VirusHardware extends OpMode {
     DcMotor rightLED;
     DcMotor leftLED;
     DcMotor glyphSlide;
-
+    CRServo relicRetractor;
     final double inPerPulse=.0175; //experimentally determined value
     Servo jewelKnocker;
     ColorSensor colorSensor;
@@ -81,6 +82,7 @@ public abstract class VirusHardware extends OpMode {
         gyroSensor = hardwareMap.gyroSensor.get("gryoSensor");
         glyphArm = hardwareMap.servo.get("glyphArm");
         glyphClaw = hardwareMap.servo.get("glyphClaw");
+        relicRetractor = hardwareMap.crservo.get("relicRetractor");
     }
 
 

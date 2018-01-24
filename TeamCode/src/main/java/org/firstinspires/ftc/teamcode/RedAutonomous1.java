@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 
-@TeleOp(name="RedAutonomous1", group="TeleOp")
+@Autonomous(name="RedAutonomous1", group="Autonomous")
 
 public class RedAutonomous1 extends VirusMethods {
     enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, moveUnitlScanned}
@@ -37,9 +37,7 @@ public class RedAutonomous1 extends VirusMethods {
         cube2.setPosition(1);
         topGrabberClose();
         lift.setPosition(0);
-        jewelKnocker.setPosition(0);
-        lift.setPosition(0);
-        jewelKnocker.setPosition(0);
+        jewelKnockerUp();
         state=state.dropArm;
 
     }
@@ -50,7 +48,7 @@ public class RedAutonomous1 extends VirusMethods {
         switch (state) {
             case dropArm:
 
-                jewelKnocker.setPosition(0.65);
+                jewelKnockerDown();
                 colorSensor.enableLed(true);
                 waitTime(1000);
                 resetEncoder();
@@ -72,14 +70,14 @@ public class RedAutonomous1 extends VirusMethods {
 
             case knockJewelLeft:
                 if (turn(345, 0.7)){
-                    jewelKnocker.setPosition(0);
+                    jewelKnockerUp();
                     state=state.turnBack;
                 }
                 break;
 
             case knockJewelRight:
                 if (turn(15, 0.7)) {
-                    jewelKnocker.setPosition(0);
+                    jewelKnockerUp();
                     state = state.turnBack;
                 }
                 break;

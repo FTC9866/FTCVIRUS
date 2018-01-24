@@ -13,8 +13,15 @@ public class Drive extends VirusMethods {
         lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        glyphSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        glyphSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         cryptoboxSection=0;
         topGrabberOpen();
+        jewelKnockerUp();
         cube1.setPosition(0.0);
         cube2.setPosition(1);
         glyphArm.setPosition(0);
@@ -29,9 +36,17 @@ public class Drive extends VirusMethods {
         }
         if (gamepad1.right_bumper){
             maxPower=1;
+            lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
         else if (gamepad1.left_bumper){
             maxPower=.4;
+            lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if (gamepad2.left_bumper) {
             topGrabberOpen();
@@ -51,7 +66,7 @@ public class Drive extends VirusMethods {
             lift.setPosition(0);
         }
         else if (gamepad2.b && !gamepad2.start){
-            lift.setPosition(.22);
+            lift.setPosition(.195);
         }
         else if (gamepad2.y){
             lift.setPosition(.32);
@@ -74,7 +89,8 @@ public class Drive extends VirusMethods {
         else if (gamepad2.dpad_down){
             glyphArm.setPosition(0);
         }
-        glyphSlide.setPower(gamepad2.right_stick_y);
+        glyphSlide.setPower(gamepad2.left_stick_y);
+        relicRetractor.setPower(gamepad2.left_stick_y);
 
         telemetry.addData("Bottom Grabber",GPS(true));
         telemetry.addData("Top Grabber",GPS(false));
