@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="TeleOp", group="TeleOp")
 
 public class Drive extends VirusMethods {
-
+    int counter = 0;
     public void start(){
         lmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -66,28 +66,41 @@ public class Drive extends VirusMethods {
             lift.setPosition(0);
         }
         else if (gamepad2.b && !gamepad2.start){
-            lift.setPosition(.195);
+            lift.setPosition(.2375);
         }
         else if (gamepad2.y){
-            lift.setPosition(.32);
+            lift.setPosition(.36);
         }
         else if (gamepad2.x){
-            lift.setPosition(.4);
+            lift.setPosition(.48);
         }
         if (gamepad2.back){
             cryptoboxSection++;
         }
-        if (gamepad2.dpad_left){
-            glyphClaw.setPosition(.5);
-        }
-        else if (gamepad2.dpad_up){
-            glyphArm.setPosition(.5);
-        }
-        else if (gamepad2.dpad_right){
-            glyphClaw.setPosition(1);
-        }
-        else if (gamepad2.dpad_down){
-            glyphArm.setPosition(0);
+//        if (gamepad2.dpad_left){
+//            glyphClaw.setPosition(.5);
+//        }
+//        else if (gamepad2.dpad_up){
+//            glyphArm.setPosition(.5);
+//        }
+//        else if (gamepad2.dpad_right){
+//            glyphClaw.setPosition(1);
+//        }
+//        else if (gamepad2.dpad_down){
+//            glyphArm.setPosition(0);
+//        }
+        if (gamepad2.dpad_down){
+            if (counter == 0 && lift.getPosition()>0){
+                lift.setPosition(lift.getPosition()+.05);
+                counter++;
+            }
+        }else if (gamepad2.dpad_up){
+            if (counter == 0 && lift.getPosition()<0.48){
+                lift.setPosition(lift.getPosition()-.05);
+                counter++;
+            }
+        }else{
+            counter = 0;
         }
         glyphSlide.setPower(gamepad2.left_stick_y);
         relicRetractor.setPower(gamepad2.left_stick_y);
