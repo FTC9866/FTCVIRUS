@@ -298,7 +298,7 @@ public abstract class VirusMethods extends VirusHardware{
         pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
         if (pose != null) {
             VectorF trans = pose.getTranslation();
-            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
 
             // Extract the X, Y, and Z components of the offset of the target relative to the robot
             double tX = trans.get(0);
@@ -327,7 +327,14 @@ public abstract class VirusMethods extends VirusHardware{
         Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.firstAngle;
     }
-
+    public double getRoll(){
+        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return Orientation.secondAngle;
+    }
+    public double getPitch(){
+        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return Orientation.thirdAngle;
+    }
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
         telemetry.addData("Green",colorSensor.green());
@@ -344,7 +351,7 @@ public abstract class VirusMethods extends VirusHardware{
         telemetry.addData("rMotor1 Target",rmotor1.getTargetPosition());
     }
     public void updateOrientation (){
-        Orientation = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
     }
 
 }
