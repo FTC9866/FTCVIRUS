@@ -15,8 +15,8 @@ public class test extends VirusMethods{
 
     public void init(){
         super.init();
-        gyroSensor.calibrate();
-        while (gyroSensor.isCalibrating());
+        initializeIMU();
+        while (!imu.isSystemCalibrated());
     }
 
     public void start(){
@@ -25,15 +25,17 @@ public class test extends VirusMethods{
         rmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         resetEncoder();
-    jewelKnocker.setPosition(.5);
+        jewelKnocker.setPosition(.5);
         state=state.goToPosition;
 
     }
     @Override
     public void loop(){
+        updateOrientation();
         jewelKnockerDown();
         telemetry.addData("Amount Blue:", colorSensor.blue());
         telemetry.addData("Amount Red:", colorSensor.red());
+        telemetry.addData("ZHeading", getZHeading());
 
     }
 

@@ -22,10 +22,9 @@ public class RedAutonomous1 extends VirusMethods {
 
     public void init() {
         super.init();
-
-        gyroSensor.calibrate();
+        initializeIMU();
         vuforiaInit();
-        while (gyroSensor.isCalibrating());
+        while (!imu.isSystemCalibrated());
     }
 
     public void start() {
@@ -44,7 +43,8 @@ public class RedAutonomous1 extends VirusMethods {
     @Override
 
     public void loop() {
-      readVumark();
+        readVumark();
+        updateOrientation();
         switch (state) {
             case dropArm:
 

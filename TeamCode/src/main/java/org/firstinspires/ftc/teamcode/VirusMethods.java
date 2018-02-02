@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.view.OrientationEventListener;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -128,20 +134,21 @@ public abstract class VirusMethods extends VirusHardware{
     }
 
     public boolean turnMotors(double angle, boolean right, double speed) {
-        turnRate=(speed*absoluteDistance(angle,gyroSensor.getHeading())/90);
+        turnRate=(speed*absoluteDistance(angle, getZHeading())/90);
         if (right) {
             runMotors(-turnRate, -turnRate, turnRate, turnRate);
         } else {
             runMotors(turnRate, turnRate, -turnRate, -turnRate);
         }
-        telemetry.addData("distance left:", absoluteDistance(angle, gyroSensor.getHeading()));
+        telemetry.addData("distance left:", absoluteDistance(angle, getZHeading()));
 
-        if (absoluteDistance(angle, gyroSensor.getHeading()) < 15) {
+        if (absoluteDistance(angle, getZHeading()) < 15) {
 
             return true;
         }
         return false;
     }
+
 
     private double absoluteDistance(double angle1, double angle2) {
 
@@ -154,7 +161,7 @@ public abstract class VirusMethods extends VirusHardware{
     }
     public boolean turn(double angle, double speed){
         angle=360-angle;
-        double currentAngle = gyroSensor.getHeading();
+        double currentAngle = getZHeading();
         angleRel = relativeAngle(angle, currentAngle); //should be distance from current angle (negative if to the counterclockwise, positive if to the clockwise)
         turnRate = speed*angleRel/90;
         if (turnRate<0){
@@ -304,6 +311,23 @@ public abstract class VirusMethods extends VirusHardware{
             double rZ = rot.thirdAngle;
         }
     }
+
+    public void initializeIMU(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+    }
+
+    public double getZHeading(){
+        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return Orientation.firstAngle;
+    }
+
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
         telemetry.addData("Green",colorSensor.green());
@@ -318,8 +342,9 @@ public abstract class VirusMethods extends VirusHardware{
         telemetry.addData("lMotor1 Target",lmotor1.getTargetPosition());
         telemetry.addData("rMotor0 Target",rmotor0.getTargetPosition());
         telemetry.addData("rMotor1 Target",rmotor1.getTargetPosition());
-
-
-
     }
+    public void updateOrientation (){
+        Orientation = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+    }
+
 }
