@@ -31,21 +31,9 @@ public class test extends VirusMethods{
     }
     @Override
     public void loop(){
-        updateControllerValues();
-        if (gamepad2.dpad_down){
-            if (counter == 0 && lift.getPosition()>0){
-                lift.setPosition(lift.getPosition()+.05);
-                counter++;
-            }
-        }else if (gamepad2.dpad_up){
-            if (counter == 0 && lift.getPosition()<0.45){
-                lift.setPosition(lift.getPosition()-.05);
-                counter++;
-            }
-        }else{
-            counter = 0;
-        }
-        telemetry.addData("L position", lift.getPosition());
+        jewelKnockerDown();
+        telemetry.addData("Amount Blue:", colorSensor.blue());
+        telemetry.addData("Amount Red:", colorSensor.red());
 
     }
 

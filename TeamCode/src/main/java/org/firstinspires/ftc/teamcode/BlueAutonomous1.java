@@ -52,39 +52,38 @@ public class BlueAutonomous1 extends VirusMethods {
             case dropArm:
 
                 jewelKnockerDown();
-                colorSensor.enableLed(true);
                 waitTime(1000);
                 resetEncoder();
-                state=state.scanJewel;
+                state = state.scanJewel;
                 break;
 
             case scanJewel:
-                if (colorSensor.red() < colorSensor.blue()) { //checks to see if object is more red or more blue
-                    knock  = true;
-                    colorSensor.enableLed(false);
-                    state=state.knockJewelLeft;
-                }
-                else if (colorSensor.blue() < colorSensor.red()) {
+                if ((colorSensor.blue() / colorSensor.red()) >= 1.7) { //checks to see if object is more red or more blue
+                    knock = true;
+                    state = state.knockJewelLeft;
+                } else if ((colorSensor.red() / colorSensor.blue()) >= 1.7) {
                     knock = false;
-                    state=state.knockJewelRight;
+                    state = state.knockJewelRight;
+                } else {
+                    turn(gyroSensor.getHeading() + 0.1, .1);
                 }
                 break;
 
             case knockJewelLeft:
-                if (turn(345, 0.7)){
+                if (turn(345, 0.7)) {
                     jewelKnockerUp();
-                    state=state.turnBack;
+                    state = state.turnBack;
                 }
                 break;
 
             case knockJewelRight:
-                if (turn(15,0.7)) {
+                if (turn(15, 0.7)) {
                     jewelKnockerUp();
                     state = state.turnBack;
                 }
                 break;
             case turnBack:
-                if (turn(0, 0.7)){
+                if (turn(0, 0.7)) {
                     position = lmotor0.getCurrentPosition();
                     state = state.moveUntilScanned;
                 }
@@ -101,46 +100,44 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
 
             case moveUntilScanned:
-                runMotors(.1,.1,.1,.1); //program to make it move backwards if it doesn't see it after traveling a certain distance
-                    if(vuMark != RelicRecoveryVuMark.UNKNOWN){
-                        telemetry.addData("VuMark", "%s visible", vuMark);
-                        VuMarkStored = vuMark;
-                        amountMovedForward = (lmotor0.getCurrentPosition()-position)*inPerPulse; //how many inches it moved back to scan the vision target
-                        state = state.alignStraight;
-                    }
+                runMotors(.1, .1, .1, .1); //program to make it move backwards if it doesn't see it after traveling a certain distance
+                if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+                    telemetry.addData("VuMark", "%s visible", vuMark);
+                    VuMarkStored = vuMark;
+                    amountMovedForward = (lmotor0.getCurrentPosition() - position) * inPerPulse; //how many inches it moved back to scan the vision target
+                    state = state.alignStraight;
+                }
                 break;
             case alignStraight:
-                if (turn(0,1)) {
+                if (turn(0, 1)) {
                     resetEncoder();
                     counter = 0;
-                    state = state.toCryptoBox ;
+                    state = state.toCryptoBox;
                 }
                 break;
             case backOnStone: //unused
-                if (setMotorPositions(0,0,0,0, .5)){
+                if (setMotorPositions(0, 0, 0, 0, .5)) {
                     resetEncoder();
-                    state=state.toCryptoBox;
+                    state = state.toCryptoBox;
                 }
                 break;
             case toCryptoBox:
                 lift(0.15); //so that cube doesn't drag on ground
-                if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(-29.6-amountMovedForward,-29.6-amountMovedForward,-29.6-amountMovedForward,-29.6-amountMovedForward, -.5)){
+                if (VuMarkStored == RelicRecoveryVuMark.LEFT) {
+                    if (setMotorPositionsINCH(-29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -.5)) {
                         resetEncoder();
                         telemetry.addData("reee", "e");
-                        state=state.faceCryptoBox;
+                        state = state.faceCryptoBox;
                     }
-                }
-                else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(-39-amountMovedForward,-39-amountMovedForward,-39-amountMovedForward,-39-amountMovedForward, -.5)){
+                } else if (VuMarkStored == RelicRecoveryVuMark.CENTER) {
+                    if (setMotorPositionsINCH(-39 - amountMovedForward, -39 - amountMovedForward, -39 - amountMovedForward, -39 - amountMovedForward, -.5)) {
                         resetEncoder();
-                        state=state.faceCryptoBox;
+                        state = state.faceCryptoBox;
                     }
-                }
-                else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(-45-amountMovedForward,-45-amountMovedForward,-45-amountMovedForward,-45-amountMovedForward, .5)){
+                } else if (VuMarkStored == RelicRecoveryVuMark.RIGHT) {
+                    if (setMotorPositionsINCH(-45 - amountMovedForward, -45 - amountMovedForward, -45 - amountMovedForward, -45 - amountMovedForward, .5)) {
                         resetEncoder();
-                        state=state.faceCryptoBox;
+                        state = state.faceCryptoBox;
                     }
                 }
 //                else { //just in case of some weird circumstance that it forgets the VuMark
@@ -152,20 +149,20 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
             case faceCryptoBox:
                 setThreshold(0);
-                if (turn(90,.6)) {
+                if (turn(90, .6)) {
                     resetEncoder();
-                    state=state.placeGlyph;
+                    state = state.placeGlyph;
                 }
                 break;
             case placeGlyph:
-                runMotors(0.3,0.3,0.3,0.3);
+                runMotors(0.3, 0.3, 0.3, 0.3);
                 waitTime(1000);
-                runMotors(0,0,0,0);
+                runMotors(0, 0, 0, 0);
                 topGrabberOpen();
                 waitTime(1000);
-                runMotors(-0.3,-0.3,-0.3,-0.3);
+                runMotors(-0.3, -0.3, -0.3, -0.3);
                 waitTime(400);
-                runMotors(0,0,0,0);
+                runMotors(0, 0, 0, 0);
                 lift(0);
 
                 state = state.secondRam;
@@ -173,19 +170,19 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
             case secondRam:
                 waitTime(1000);
-                runMotors(0.3,0.3,0.3,0.3);
+                runMotors(0.3, 0.3, 0.3, 0.3);
                 waitTime(400);
-                runMotors(0,0,0,0);
+                runMotors(0, 0, 0, 0);
                 waitTime(1000);
-                runMotors(-0.3,-0.3,-0.3,-0.3);
+                runMotors(-0.3, -0.3, -0.3, -0.3);
                 waitTime(400);
-                runMotors(0,0,0,0);
+                runMotors(0, 0, 0, 0);
                 state = state.stop;
                 break;
             case turnAround:
-                if (turn(90,0.7)){
+                if (turn(90, 0.7)) {
                     resetEncoder();
-                    state=state.grab;
+                    state = state.grab;
                 }
                 break;
             case grab:
@@ -196,18 +193,18 @@ public class BlueAutonomous1 extends VirusMethods {
                 telemetry.addData("setMotor returns", setMotor);
                 telemetry.addData("inPerPulse", inPerPulse);
                 telemetry.addData("left motor", lmotor0.isBusy());
-                telemetry.addData("counter",counter);
+                telemetry.addData("counter", counter);
                 break;
 
             case stop:
                 telemetry.addData("state", state);
-                runMotors(0,0,0,0);
+                runMotors(0, 0, 0, 0);
                 break;
         }
-        telemetry.addData("Blue: true Red: false ", knock);
         telemetry.addData("Amount Blue:", colorSensor.blue());
         telemetry.addData("Amount Red:", colorSensor.red());
         telemetry.addData("state", state);
+        telemetry.addData("Gyro Reading: ", gyroSensor.getHeading());
         // Telemetry();,k
     }
 }
