@@ -16,7 +16,7 @@ public class test extends VirusMethods{
     public void init(){
         super.init();
         initializeIMU();
-        while (!imu.isSystemCalibrated());
+        //while (!imu.isSystemCalibrated());
     }
 
     public void start(){
@@ -32,7 +32,10 @@ public class test extends VirusMethods{
     @Override
     public void loop(){
         updateOrientation();
-        jewelKnockerDown();
+        if (gamepad2.a){
+            turn(90,.1);
+
+        }
         telemetry.addData("Amount Blue:", colorSensor.blue());
         telemetry.addData("Amount Red:", colorSensor.red());
         telemetry.addData("ZHeading", getZHeading());

@@ -57,10 +57,10 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
 
             case scanJewel:
-                if ((colorSensor.blue() / colorSensor.red()) >= 1.7) { //checks to see if object is more red or more blue
+                if ((colorSensor.blue() / colorSensor.red()) >= 1.5) { //checks to see if object is more red or more blue
                     knock = true;
                     state = state.knockJewelLeft;
-                } else if ((colorSensor.red() / colorSensor.blue()) >= 1.7) {
+                } else if ((colorSensor.red() / colorSensor.blue()) >= 2) {
                     knock = false;
                     state = state.knockJewelRight;
                 }

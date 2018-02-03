@@ -325,6 +325,11 @@ public abstract class VirusMethods extends VirusHardware{
 
     public double getZHeading(){
         Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        if(Orientation.firstAngle<0){
+            Orientation.firstAngle*=-1;
+        }else if(Orientation.firstAngle>0){
+            Orientation.firstAngle = 360-Orientation.firstAngle;
+        }
         return Orientation.firstAngle;
     }
     public double getRoll(){
