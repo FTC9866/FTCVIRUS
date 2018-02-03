@@ -23,9 +23,9 @@ public class BlueAutonomous1 extends VirusMethods {
 
     public void init() {
         super.init();
-        gyroSensor.calibrate();
+        initializeIMU();
         vuforiaInit();
-        while (gyroSensor.isCalibrating());
+        while (!imu.isSystemCalibrated());
 
     }
 
@@ -39,15 +39,14 @@ public class BlueAutonomous1 extends VirusMethods {
         topGrabberClose();
         lift.setPosition(0);
         jewelKnockerUp();
-
         state=state.dropArm;
 
     }
     @Override
 
     public void loop() {
-
         readVumark();
+        updateOrientation();
         switch (state) {
             case dropArm:
 
@@ -64,10 +63,10 @@ public class BlueAutonomous1 extends VirusMethods {
                 } else if ((colorSensor.red() / colorSensor.blue()) >= 1.7) {
                     knock = false;
                     state = state.knockJewelRight;
-                } else {
-                    turn(gyroSensor.getHeading() + 0.1, .1);
                 }
-                break;
+                {
+                    turn(getZHeading() + 0.1, .1);
+                }
 
             case knockJewelLeft:
                 if (turn(345, 0.7)) {
@@ -204,7 +203,7 @@ public class BlueAutonomous1 extends VirusMethods {
         telemetry.addData("Amount Blue:", colorSensor.blue());
         telemetry.addData("Amount Red:", colorSensor.red());
         telemetry.addData("state", state);
-        telemetry.addData("Gyro Reading: ", gyroSensor.getHeading());
+        telemetry.addData("Gyro Reading: ", getZHeading());
         // Telemetry();,k
     }
 }

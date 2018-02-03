@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -9,6 +11,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -19,6 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 
 public abstract class VirusHardware extends OpMode {
+    public ElapsedTime deltaT = new ElapsedTime();
     DcMotor rmotor0; //0 is the front
     DcMotor lmotor0;
     DcMotor rmotor1;
@@ -29,7 +36,6 @@ public abstract class VirusHardware extends OpMode {
     CRServo relicRetractor;
     final double inPerPulse=.0175; //experimentally determined value
     Servo jewelKnocker;
-    ColorSensor colorSensor;
     Servo cube1;
     Servo cube2;
     Servo cube3;
@@ -37,7 +43,7 @@ public abstract class VirusHardware extends OpMode {
     Servo lift;
     Servo glyphArm;
     Servo glyphClaw;
-    GyroSensor gyroSensor;
+    ColorSensor colorSensor;
     double maxPower=1;
     double lefty;
     double leftx;
@@ -47,6 +53,7 @@ public abstract class VirusHardware extends OpMode {
     double ltrigger;
     double var1;
     double var2;
+
     public static final String TAG = "Vuforia VuMark Sample";
     OpenGLMatrix lastLocation = null;
     VuforiaLocalizer vuforia;
@@ -57,6 +64,9 @@ public abstract class VirusHardware extends OpMode {
     OpenGLMatrix pose;
     RelicRecoveryVuMark VuMarkStored;
     public ElapsedTime mRunTime = new ElapsedTime();
+
+    BNO055IMU imu;
+    Orientation Orientation = new Orientation(AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES,0,0,0,0);
 
     public void init(){
         lmotor0 = hardwareMap.dcMotor.get("lmotor0");
@@ -77,9 +87,9 @@ public abstract class VirusHardware extends OpMode {
         cube3 = hardwareMap.servo.get("cube3");
         cube4 = hardwareMap.servo.get("cube4");
         lift = hardwareMap.servo.get("lift");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         colorSensor = hardwareMap.colorSensor.get("colorSensor");
-        gyroSensor = hardwareMap.gyroSensor.get("gryoSensor");
         glyphArm = hardwareMap.servo.get("glyphArm");
         glyphClaw = hardwareMap.servo.get("glyphClaw");
         relicRetractor = hardwareMap.crservo.get("relicRetractor");
