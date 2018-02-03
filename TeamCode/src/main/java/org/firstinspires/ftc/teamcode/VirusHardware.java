@@ -69,7 +69,7 @@ public abstract class VirusHardware extends OpMode {
     Orientation Orientation = new Orientation(AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES,0,0,0,0);
 
     public void init(){
-
+        msStuckDetectInit = 10000;
         lmotor0 = hardwareMap.dcMotor.get("lmotor0");
         rmotor0 = hardwareMap.dcMotor.get("rmotor0");
         lmotor1 = hardwareMap.dcMotor.get("lmotor1");
