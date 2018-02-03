@@ -324,7 +324,7 @@ public abstract class VirusMethods extends VirusHardware{
     }
 
     public double getZHeading(){
-        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         if(Orientation.firstAngle<0){
             Orientation.firstAngle*=-1;
         }else if(Orientation.firstAngle>0){
@@ -333,11 +333,11 @@ public abstract class VirusMethods extends VirusHardware{
         return Orientation.firstAngle;
     }
     public double getRoll(){
-        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.secondAngle;
     }
     public double getPitch(){
-        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.thirdAngle;
     }
     public void Telemetry(){
