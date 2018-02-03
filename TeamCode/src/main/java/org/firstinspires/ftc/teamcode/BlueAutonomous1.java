@@ -23,9 +23,9 @@ public class BlueAutonomous1 extends VirusMethods {
 
     public void init() {
         super.init();
-        initializeIMU();
+       // initializeIMU();
         vuforiaInit();
-        while (!imu.isSystemCalibrated());
+     //   while (!imu.isSystemCalibrated());
 
     }
 
@@ -147,7 +147,7 @@ public class BlueAutonomous1 extends VirusMethods {
 //                }
                 break;
             case faceCryptoBox:
-                setThreshold(0);
+                setThreshold(.25);
                 if (turn(90, .6)) {
                     resetEncoder();
                     state = state.placeGlyph;

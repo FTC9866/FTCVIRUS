@@ -32,13 +32,29 @@ public class test extends VirusMethods{
     @Override
     public void loop(){
         updateOrientation();
-        if (gamepad2.a){
-            turn(90,.1);
 
+        if (gamepad2.a) {
+            switch (state) {
+                case goToPosition:
+                    if (turn(90, .5)) {
+                        state = state.stop;
+                    }
+                    break;
+                case stop:
+                    runMotors(0, 0, 0, 0);
+                    telemetry.addData("ZHeading", getZHeading());
+                    break;
+
+            }
         }
-        telemetry.addData("Amount Blue:", colorSensor.blue());
-        telemetry.addData("Amount Red:", colorSensor.red());
-        telemetry.addData("ZHeading", getZHeading());
+        else{
+            telemetry.addData("Amount Blue:", colorSensor.blue());
+            telemetry.addData("Amount Red:", colorSensor.red());
+            telemetry.addData("ZHeading", getZHeading());
+            telemetry.addData("RawZHeading", getRawZHeading());
+        }
+
+
 
     }
 

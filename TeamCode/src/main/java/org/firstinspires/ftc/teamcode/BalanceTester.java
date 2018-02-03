@@ -13,6 +13,7 @@ public class BalanceTester extends VirusMethods {
         while (!imu.isSystemCalibrated());
     }
     public void loop(){
+        updateOrientation();
         balance();
     }
 }

@@ -30,7 +30,7 @@ public abstract class VirusMethods extends VirusHardware{
     double turnRate;
     double angleRel;
     double maxDisplacement;
-    double threshold = 1;
+    double threshold = .25;
     boolean triggered;
     int cryptoboxSection;
     String[][]cryptobox = {{"brown","gray","gray"},{"brown","brown","gray"},{"gray","brown","brown"},{"gray","gray","brown"}};
@@ -176,7 +176,7 @@ public abstract class VirusMethods extends VirusHardware{
         }
         return false;
     }
-    public void setThreshold(int newThreshold){
+    public void setThreshold(double newThreshold){
         threshold = newThreshold;
     }
     private double relativeAngle(double angle, double currentAngle){
@@ -325,11 +325,24 @@ public abstract class VirusMethods extends VirusHardware{
 
     public double getZHeading(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        if(Orientation.firstAngle<0){
-            Orientation.firstAngle*=-1;
+       /* if(Orientation.firstAngle<0){
+            return Orientation.firstAngle*-1;
         }else if(Orientation.firstAngle>0){
-            Orientation.firstAngle = 360-Orientation.firstAngle;
+            return 360-Orientation.firstAngle;
         }
+        else{
+            return 0;
+        }*/
+        if(Orientation.firstAngle<0){
+            return 360+Orientation.firstAngle;
+        }else if(Orientation.firstAngle>0){
+            return Orientation.firstAngle;
+        }
+        else{
+            return 0;
+        }
+    }
+    public double getRawZHeading(){
         return Orientation.firstAngle;
     }
     public double getRoll(){

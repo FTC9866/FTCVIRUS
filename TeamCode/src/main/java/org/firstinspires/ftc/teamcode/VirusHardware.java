@@ -90,7 +90,7 @@ public abstract class VirusHardware extends OpMode {
         lift = hardwareMap.servo.get("lift");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
-        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+        colorSensor = hardwareMap.get(AdafruitI2cColorSensor.class, "colorSensor");
         glyphArm = hardwareMap.servo.get("glyphArm");
         glyphClaw = hardwareMap.servo.get("glyphClaw");
         relicRetractor = hardwareMap.crservo.get("relicRetractor");
