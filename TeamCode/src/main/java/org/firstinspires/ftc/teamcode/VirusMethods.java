@@ -345,11 +345,11 @@ public abstract class VirusMethods extends VirusHardware{
     public double getRawZHeading(){
         return Orientation.firstAngle;
     }
-    public double getRoll(){
+    public double getPitch(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.secondAngle;
     }
-    public double getPitch(){
+    public double getRoll(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.thirdAngle;
     }
@@ -376,4 +376,5 @@ public abstract class VirusMethods extends VirusHardware{
         double left0 = getPitch()*constant, left1 = getPitch()*constant, right0 = getPitch()*constant, right1 = getPitch()*constant;
         runMotors(left0,left1,right0,right1);
     }
+
 }
