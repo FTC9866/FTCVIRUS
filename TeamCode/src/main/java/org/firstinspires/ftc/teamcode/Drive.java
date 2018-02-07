@@ -43,7 +43,7 @@ public class Drive extends VirusMethods {
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
         else if (gamepad1.left_bumper){
-            maxPower=.5;
+            maxPower=.75;
             maxSteerPower=.3;
             lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
