@@ -38,10 +38,10 @@ public abstract class VirusMethods extends VirusHardware{
         if (Left0!=0&&Left1!=0&&Right0!=0&&Right1!=0) {
             steerMagnitude *= 2 * Math.max(Math.max(Left0, Left1), Math.max(Right0, Right1));
         }
-        Left0=Left0+steerMagnitude;
-        Left1=Left1+steerMagnitude;
-        Right0=Right0-steerMagnitude;
-        Right1=Right1-steerMagnitude;
+        Left0=Left0+maxSteerPower*steerMagnitude;
+        Left1=Left1+maxSteerPower*steerMagnitude;
+        Right0=Right0-maxSteerPower*steerMagnitude;
+        Right1=Right1-maxSteerPower*steerMagnitude;
         //make sure no exception thrown if power > 0
         Left0 = Range.clip(Left0, -maxPower, maxPower);
         Left1 = Range.clip(Left1, -maxPower, maxPower);
@@ -224,6 +224,8 @@ public abstract class VirusMethods extends VirusHardware{
         double magnitude = Math.sqrt(lefty*lefty+leftx*leftx);
         var1= (lefty-leftx)*magnitude/scalar;
         var2= (lefty+leftx)*magnitude/scalar;
+        var1*=maxPower;
+        var2*=maxPower;
     }
     public void vuforiaInit(){
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);

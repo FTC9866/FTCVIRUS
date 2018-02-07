@@ -36,13 +36,15 @@ public class Drive extends VirusMethods {
         }
         if (gamepad1.right_bumper){
             maxPower=1;
+            maxSteerPower=1;
             lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
         else if (gamepad1.left_bumper){
-            maxPower=.4;
+            maxPower=.5;
+            maxSteerPower=.3;
             lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

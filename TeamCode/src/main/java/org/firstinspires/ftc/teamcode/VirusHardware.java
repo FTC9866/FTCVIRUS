@@ -47,6 +47,7 @@ public abstract class VirusHardware extends OpMode {
     Servo glyphClaw;
     ColorSensor colorSensor;
     double maxPower=1;
+    double maxSteerPower;
     double lefty;
     double leftx;
     double righty;
