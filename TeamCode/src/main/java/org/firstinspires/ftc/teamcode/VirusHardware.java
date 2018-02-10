@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -34,18 +35,21 @@ public abstract class VirusHardware extends OpMode {
     DcMotor lmotor1;
     DcMotor rightLED;
     DcMotor leftLED;
-    DcMotor glyphSlide;
+    //DcMotor glyphSlide;
+    DcMotor liftRight;
+    DcMotor liftLeft;
     CRServo relicRetractor;
     final double inPerPulse=.0175; //experimentally determined value
+    Servo jewelKnockerBase;
     Servo jewelKnocker;
     Servo cube1;
     Servo cube2;
     Servo cube3;
     Servo cube4;
-    Servo lift;
     Servo glyphArm;
     Servo glyphClaw;
     ColorSensor colorSensor;
+    ElapsedTime elapsedCounter;
     double maxPower=1;
     double maxSteerPower;
     double lefty;
@@ -72,14 +76,16 @@ public abstract class VirusHardware extends OpMode {
     Orientation Orientation = new Orientation(AxesReference.EXTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES,0,0,0,0);
 
     public void init(){
-        msStuckDetectInit = 10000;
+        elapsedCounter = new ElapsedTime();
+        msStuckDetectInit = 1000000000;
         lmotor0 = hardwareMap.dcMotor.get("lmotor0");
         rmotor0 = hardwareMap.dcMotor.get("rmotor0");
         lmotor1 = hardwareMap.dcMotor.get("lmotor1");
         rmotor1 = hardwareMap.dcMotor.get("rmotor1");
-        //rightLED = hardwareMap.dcMotor.get("rightLED");
-        //leftLED = hardwareMap.dcMotor.get("leftLED");
-        glyphSlide = hardwareMap.dcMotor.get("glyphSlide");
+        //glyphSlide = hardwareMap.dcMotor.get("glyphSlide");
+        liftRight = hardwareMap.dcMotor.get("liftRight");
+        liftLeft = hardwareMap.dcMotor.get("liftLeft");
+        liftLeft.setDirection(DcMotor.Direction.REVERSE);
         lmotor0.setDirection(DcMotor.Direction.REVERSE);
         lmotor1.setDirection(DcMotor.Direction.REVERSE);
         lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,9 +96,9 @@ public abstract class VirusHardware extends OpMode {
         cube2 = hardwareMap.servo.get("cube2");
         cube3 = hardwareMap.servo.get("cube3");
         cube4 = hardwareMap.servo.get("cube4");
-        lift = hardwareMap.servo.get("lift");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
+        jewelKnockerBase = hardwareMap.servo.get("jewelKnockerBase");
         colorSensor = hardwareMap.get(AdafruitI2cColorSensor.class, "colorSensor");
         glyphArm = hardwareMap.servo.get("glyphArm");
         glyphClaw = hardwareMap.servo.get("glyphClaw");

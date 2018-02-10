@@ -13,12 +13,12 @@ public class Drive extends VirusMethods {
         lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        glyphSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // glyphSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        glyphSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // glyphSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         cryptoboxSection=0;
         topGrabberOpen();
         jewelKnockerUp();
@@ -64,17 +64,18 @@ public class Drive extends VirusMethods {
             cube1.setPosition(.6);
             cube2.setPosition(.4);
         }
+        liftPower(gamepad2.right_stick_y);
         if (gamepad2.a){
-            lift.setPosition(0);
+            lift(0);
         }
         else if (gamepad2.b && !gamepad2.start){
-            lift.setPosition(.2375);
+            lift(-2333.5);
         }
         else if (gamepad2.y){
-            lift.setPosition(.36);
+            lift(-4667);
         }
         else if (gamepad2.x){
-            lift.setPosition(.48);
+            lift(-7000.5);
         }
         if (gamepad2.back){
             cryptoboxSection++;
@@ -91,7 +92,7 @@ public class Drive extends VirusMethods {
 //        else if (gamepad2.dpad_down){
 //            glyphArm.setPosition(0);
 //        }
-        if (gamepad2.dpad_down){
+        /*if (gamepad2.dpad_down){
             if (counter == 0 && lift.getPosition()>0){
                 lift.setPosition(lift.getPosition()+.05);
                 counter++;
@@ -103,13 +104,16 @@ public class Drive extends VirusMethods {
             }
         }else{
             counter = 0;
-        }
-        glyphSlide.setPower(gamepad2.left_stick_y);
+        } */
+
+        // glyphSlide.setPower(gamepad2.left_stick_y);
         relicRetractor.setPower(gamepad2.left_stick_y);
 
         telemetry.addData("Bottom Grabber",GPS(true));
         telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());
-       // Telemetry();
+        telemetry.addData("liftLeft Encoder:", liftLeft.getCurrentPosition());
+        telemetry.addData("liftRight Encoder:", liftRight.getCurrentPosition());
+        // Telemetry();
     }
 }

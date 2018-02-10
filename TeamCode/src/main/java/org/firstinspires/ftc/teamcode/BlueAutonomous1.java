@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,24 +24,25 @@ public class BlueAutonomous1 extends VirusMethods {
 
     public void init() {
         super.init();
-       // initializeIMU();
-        vuforiaInit();
-     //   while (!imu.isSystemCalibrated());
+        initializeIMU();
 
     }
 
     public void start() {
+        super.start();
+        vuforiaInit();
+
         lmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
+        jewelKnockerBase.setPosition(0.5);
         topGrabberClose();
-        lift.setPosition(0);
+        // lift.setPosition(0);
         jewelKnockerUp();
         state=state.dropArm;
-
     }
     @Override
 
@@ -54,47 +56,40 @@ public class BlueAutonomous1 extends VirusMethods {
                 waitTime(1000);
                 resetEncoder();
                 state = state.scanJewel;
+                elapsedCounter.reset();
                 break;
 
             case scanJewel:
-                if ((colorSensor.blue() / colorSensor.red()) >= 1.5) { //checks to see if object is more red or more blue
+                if ((Math.abs(getBlue() - getRed()) > 10) && ((getBlue() / (getRed()+.01)) >= 1.5)) { //checks to see if object is more red or more blue
                     knock = true;
                     state = state.knockJewelLeft;
-                } else if ((colorSensor.red() / colorSensor.blue()) >= 2) {
+                } else if ((Math.abs(getBlue() - getRed()) > 10) && ((getRed() / (getBlue()+.01)) >= 1.5)) {
                     knock = false;
                     state = state.knockJewelRight;
+                } else if (elapsedCounter.milliseconds() >= 50) {
+                    elapsedCounter.reset();
+                    jewelKnockerBase.setPosition(jewelKnockerBase.getPosition() + 0.005);
                 }
-                {
-                    turn(getZHeading() + 0.1, .1);
-                }
+                break;
 
             case knockJewelLeft:
-                if (turn(345, 0.7)) {
-                    jewelKnockerUp();
-                    state = state.turnBack;
-                }
+                jewelKnockerBase.setPosition(.25);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
             case knockJewelRight:
-                if (turn(15, 0.7)) {
-                    jewelKnockerUp();
-                    state = state.turnBack;
-                }
-                break;
-            case turnBack:
-                if (turn(0, 0.7)) {
-                    position = lmotor0.getCurrentPosition();
-                    state = state.moveUntilScanned;
-                }
-                break;
-            //turnBackLeft and turnBackRight kept just in case turnMotorsPlus method doesn't work
-            case turnBackLeft:
-                turnMotors(0, true, 0.5);
-                state = state.moveUntilScanned;
+                jewelKnockerBase.setPosition(.75);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
-            case turnBackRight:
-                turnMotors(0, false, 0.5);
+            case turnBack:
+                jewelKnockerBase.setPosition(0.5);
+                waitTime(500);
+                position = lmotor0.getCurrentPosition();
                 state = state.moveUntilScanned;
                 break;
 
@@ -121,7 +116,7 @@ public class BlueAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                lift(0.15); //so that cube doesn't drag on ground
+                // lift(0.15); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT) {
                     if (setMotorPositionsINCH(-29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -.5)) {
                         resetEncoder();
@@ -162,7 +157,7 @@ public class BlueAutonomous1 extends VirusMethods {
                 runMotors(-0.3, -0.3, -0.3, -0.3);
                 waitTime(400);
                 runMotors(0, 0, 0, 0);
-                lift(0);
+                // lift(0);
 
                 state = state.secondRam;
 
@@ -200,8 +195,9 @@ public class BlueAutonomous1 extends VirusMethods {
                 runMotors(0, 0, 0, 0);
                 break;
         }
-        telemetry.addData("Amount Blue:", colorSensor.blue());
-        telemetry.addData("Amount Red:", colorSensor.red());
+        telemetry.addData("Amount Blue:", getBlue());
+        telemetry.addData("Amount Red:", getRed());
+        telemetry.addData("elapsed Time:", elapsedCounter.milliseconds());
         telemetry.addData("state", state);
         telemetry.addData("Gyro Reading: ", getZHeading());
         // Telemetry();,k

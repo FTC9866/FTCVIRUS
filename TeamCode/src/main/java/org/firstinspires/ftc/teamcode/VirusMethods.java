@@ -107,32 +107,6 @@ public abstract class VirusMethods extends VirusHardware{
         return (!lmotor0.isBusy() && !lmotor1.isBusy() && !rmotor0.isBusy() && !rmotor1.isBusy()); //returns true when motors are not busy
     }
 
-//    public boolean turn (double angle, double speed) {
-//        double threshold = 1;
-//        turnRate=(speed*angleDistance(angle, gyroSensor.getHeading())/90); //preferably, 90 is changed to the initial distance from the angle. I couldn't find a good way for that to work
-//        if (turnRate>0){
-//            turnRate+=.05; //you guys might want to experiment with this value
-//        }
-//        if (turnRate<0){
-//            turnRate-=.05; //you guys might want to experiment with this value
-//        }
-//
-//        runMotors(turnRate, turnRate, -turnRate, -turnRate);
-//        if (-threshold< angleDistance(angle, gyroSensor.getHeading())&& angleDistance(angle, gyroSensor.getHeading())<threshold)
-//        {
-//            return true;
-//        }
-//        return false;
-//    }
-
-    private double angleDistance(double angle, double currentAngle) {
-        double distance= angle - currentAngle;
-        if (angle < -180){
-            distance+=180;
-        }
-        return distance;
-    }
-
     public boolean turnMotors(double angle, boolean right, double speed) {
         turnRate=(speed*absoluteDistance(angle, getZHeading())/90);
         if (right) {
@@ -238,8 +212,25 @@ public abstract class VirusMethods extends VirusHardware{
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         relicTrackables.activate();
     }
+
     public void lift(double position) {
-        lift.setPosition(position);
+        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftLeft.setPower(-1);
+        liftRight.setPower(-1);
+        liftLeft.setTargetPosition((int) position);
+        liftRight.setTargetPosition((int) position);
+        if ((!liftLeft.isBusy())&&(!liftRight.isBusy())) {
+            liftLeft.setPower(0);
+            liftRight.setPower(0);
+        }
+    }
+
+    public void liftPower(double power){
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setPower(power);
+        liftRight.setPower(power);
     }
     public void topGrabberOpen(){
         cube3.setPosition(.15);
@@ -347,6 +338,7 @@ public abstract class VirusMethods extends VirusHardware{
     public double getRawZHeading(){
         return Orientation.firstAngle;
     }
+
     public double getPitch(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.secondAngle;
@@ -355,6 +347,9 @@ public abstract class VirusMethods extends VirusHardware{
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return Orientation.thirdAngle;
     }
+    public double getRed(){return colorSensor.red()-initialRed;}
+    public double getBlue(){return colorSensor.blue()-initialBlue;}
+
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
         telemetry.addData("Green",colorSensor.green());

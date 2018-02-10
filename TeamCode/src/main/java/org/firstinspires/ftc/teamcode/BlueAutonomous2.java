@@ -23,19 +23,20 @@ public class BlueAutonomous2 extends VirusMethods {
     public void init() {
         super.init();
         initializeIMU();
-        vuforiaInit();
-        while (!imu.isSystemCalibrated());
     }
 
     public void start() {
+        super.start();
+        vuforiaInit();
         lmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
+        jewelKnockerBase.setPosition(0.5);
         topGrabberClose();
-        lift.setPosition(0);
+        // lift.setPosition(0);
         jewelKnockerUp();
         state=state.dropArm;
     }
@@ -55,46 +56,47 @@ public class BlueAutonomous2 extends VirusMethods {
                 break;
 
             case scanJewel:
-                if (colorSensor.red() < colorSensor.blue()) { //checks to see if object is more red or more blue
-                    knock  = true;
-                    colorSensor.enableLed(false);
-                    state=state.knockJewelLeft;
-                }
-                else if (colorSensor.blue() < colorSensor.red()) {
+                if ((Math.abs(getBlue() - getRed()) > 10) && ((getBlue() / (getRed()+.01)) >= 1.5)) { //checks to see if object is more red or more blue
+                    knock = true;
+                    state = state.knockJewelLeft;
+                } else if ((Math.abs(getBlue() - getRed()) > 10) && ((getRed() / (getBlue()+.01)) >= 1.5)) {
                     knock = false;
-                    state=state.knockJewelRight;
+                    state = state.knockJewelRight;
+                } else if (elapsedCounter.milliseconds() >= 50) {
+                    elapsedCounter.reset();
+                    jewelKnockerBase.setPosition(jewelKnockerBase.getPosition() + 0.005);
                 }
                 break;
 
             case knockJewelLeft:
-                if (turn(345, 0.7)){
-                    jewelKnockerUp();
-                    state=state.turnBack;
-                }
+                jewelKnockerBase.setPosition(.25);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
             case knockJewelRight:
-                if (turn(15, 0.7)) {
-                    jewelKnockerUp();
-                    state = state.turnBack;
-                }
+                jewelKnockerBase.setPosition(.75);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
             case turnBack:
-                if (turn(0, 0.7)){
-                    position = lmotor0.getCurrentPosition();
-                    state = state.moveUntilScanned;
-                }
+                jewelKnockerBase.setPosition(0.5);
+                waitTime(500);
+                position = lmotor0.getCurrentPosition();
+                state = state.moveUntilScanned;
                 break;
 
             case moveUntilScanned:
                 runMotors(.1,.1,.1,.1); //program to make it move backwards if it doesn't see it after traveling a certain distance
-                    if(vuMark != RelicRecoveryVuMark.UNKNOWN){
-                        telemetry.addData("VuMark", "%s visible", vuMark);
-                        VuMarkStored = vuMark;
-                        amountMovedForward = (lmotor0.getCurrentPosition()-position)*inPerPulse; //how many inches it moved back to scan the vision target
-                        state = state.alignStraight;
-                    }
+                if(vuMark != RelicRecoveryVuMark.UNKNOWN){
+                    telemetry.addData("VuMark", "%s visible", vuMark);
+                    VuMarkStored = vuMark;
+                    amountMovedForward = (lmotor0.getCurrentPosition()-position)*inPerPulse; //how many inches it moved back to scan the vision target
+                    state = state.alignStraight;
+                }
                 break;
 
             case alignStraight:
@@ -113,7 +115,7 @@ public class BlueAutonomous2 extends VirusMethods {
                 break;
 
             case toCryptoBoxpart1:
-                lift(0.15); //so that cube doesn't drag on ground
+                // lift(0.15); //so that cube doesn't drag on ground
                 if (setMotorPositionsINCH(-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-.5)){
                     resetEncoder();
                     state = state.turn90;
@@ -127,7 +129,7 @@ public class BlueAutonomous2 extends VirusMethods {
                 break;
 
             case toCryptoBoxpart2:
-                lift(0.03); //so that cube doesn't drag on ground
+                // lift(0.03); //so that cube doesn't drag on ground
                 //change the motor position values as needed after testing on field
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
                     if (setMotorPositionsINCH(-8.5,-8.5,-8.5,-8.5, -.5)){
@@ -169,7 +171,7 @@ public class BlueAutonomous2 extends VirusMethods {
                 runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
-                lift(0);
+                // lift(0);
                 state = state.secondRam;
 
                 break;
