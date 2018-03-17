@@ -29,6 +29,7 @@ public abstract class VirusMethods extends VirusHardware{
     double amountMovedForward;
     double turnRate;
     double angleRel;
+    boolean patternFound;
     double maxDisplacement;
     double threshold = .25;
     boolean triggered;
@@ -107,32 +108,6 @@ public abstract class VirusMethods extends VirusHardware{
         return (!lmotor0.isBusy() && !lmotor1.isBusy() && !rmotor0.isBusy() && !rmotor1.isBusy()); //returns true when motors are not busy
     }
 
-    public boolean turnMotors(double angle, boolean right, double speed) {
-        turnRate=(speed*absoluteDistance(angle, getZHeading())/90);
-        if (right) {
-            runMotors(-turnRate, -turnRate, turnRate, turnRate);
-        } else {
-            runMotors(turnRate, turnRate, -turnRate, -turnRate);
-        }
-        telemetry.addData("distance left:", absoluteDistance(angle, getZHeading()));
-
-        if (absoluteDistance(angle, getZHeading()) < 15) {
-
-            return true;
-        }
-        return false;
-    }
-
-
-    private double absoluteDistance(double angle1, double angle2) {
-
-        double angleDistance = Math.abs(angle1 - angle2);
-
-        if (angleDistance > 180) {
-            angleDistance = 360 - angleDistance;
-        }
-        return angleDistance;
-    }
     public boolean turn(double angle, double speed){
         angle=360-angle;
         double currentAngle = getZHeading();
@@ -232,9 +207,15 @@ public abstract class VirusMethods extends VirusHardware{
         liftLeft.setPower(power);
         liftRight.setPower(power);
     }
-    public void topGrabberOpen(){
-        cube3.setPosition(.15);
-        cube4.setPosition(.85);
+    public void topGrabberOpen(boolean semi){
+        if(semi){
+            cube3.setPosition(.27);
+            cube4.setPosition(.73);
+        }else{
+            cube3.setPosition(.15);
+            cube4.setPosition(.85);
+        }
+
     }
     public void topGrabberClose(){
         cube3.setPosition(.6);

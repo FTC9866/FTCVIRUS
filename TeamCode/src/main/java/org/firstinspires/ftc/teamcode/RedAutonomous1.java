@@ -23,7 +23,6 @@ public class RedAutonomous1 extends VirusMethods {
     public void init() {
         super.init();
         initializeIMU();
-        vuforiaInit();
     }
 
     public void start() {
@@ -36,7 +35,7 @@ public class RedAutonomous1 extends VirusMethods {
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
-        jewelKnockerBase.setPosition(0.5);
+        jewelKnockerBase.setPosition(0.52);
         topGrabberClose();
         // lift.setPosition(0);
         jewelKnockerUp();
@@ -86,7 +85,7 @@ public class RedAutonomous1 extends VirusMethods {
                 break;
 
             case turnBack:
-                jewelKnockerBase.setPosition(0.5);
+                jewelKnockerBase.setPosition(0.52);
                 waitTime(500);
                 position = lmotor0.getCurrentPosition();
                 state = state.moveUntilScanned;
@@ -115,7 +114,7 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                // lift(0.15); //so that cube doesn't drag on ground
+                lift(2000); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
                     if (setMotorPositionsINCH(45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
@@ -149,12 +148,13 @@ public class RedAutonomous1 extends VirusMethods {
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(1000);
                 runMotors(0,0,0,0);
-                topGrabberOpen();
+                topGrabberOpen(true);
                 waitTime(1000);
                 runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
-                // lift(0);
+                topGrabberOpen(false);
+                lift(0);
                 state = state.secondRam;
 
                 break;

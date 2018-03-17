@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -38,7 +36,7 @@ public abstract class VirusHardware extends OpMode {
     //DcMotor glyphSlide;
     DcMotor liftRight;
     DcMotor liftLeft;
-    CRServo relicRetractor;
+    DcMotor relicSlide;
     final double inPerPulse=.0175; //experimentally determined value
     Servo jewelKnockerBase;
     Servo jewelKnocker;
@@ -46,12 +44,12 @@ public abstract class VirusHardware extends OpMode {
     Servo cube2;
     Servo cube3;
     Servo cube4;
-    Servo glyphArm;
-    Servo glyphClaw;
+    Servo relicArm;
+    Servo relicClaw;
     ColorSensor colorSensor;
     ElapsedTime elapsedCounter;
     double maxPower=1;
-    double maxSteerPower;
+    double maxSteerPower=1;
     double lefty;
     double leftx;
     double righty;
@@ -77,7 +75,6 @@ public abstract class VirusHardware extends OpMode {
 
     public void init(){
         elapsedCounter = new ElapsedTime();
-        msStuckDetectInit = 1000000000;
         lmotor0 = hardwareMap.dcMotor.get("lmotor0");
         rmotor0 = hardwareMap.dcMotor.get("rmotor0");
         lmotor1 = hardwareMap.dcMotor.get("lmotor1");
@@ -100,10 +97,9 @@ public abstract class VirusHardware extends OpMode {
         jewelKnocker = hardwareMap.servo.get("jewelKnocker");
         jewelKnockerBase = hardwareMap.servo.get("jewelKnockerBase");
         colorSensor = hardwareMap.get(AdafruitI2cColorSensor.class, "colorSensor");
-        glyphArm = hardwareMap.servo.get("glyphArm");
-        glyphClaw = hardwareMap.servo.get("glyphClaw");
-        relicRetractor = hardwareMap.crservo.get("relicRetractor");
-
+        relicArm = hardwareMap.servo.get("relicArm");
+        relicClaw = hardwareMap.servo.get("relicClaw");
+        relicSlide = hardwareMap.dcMotor.get("relicSlide");
     }
     public void start(){
         initialBlue=colorSensor.blue();

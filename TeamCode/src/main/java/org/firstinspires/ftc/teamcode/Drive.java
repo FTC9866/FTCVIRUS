@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="TeleOp", group="TeleOp")
 
 public class Drive extends VirusMethods {
-    int counter = 0;
+    boolean topFullOpen=false;
+    boolean bottomFullOpen=false;
     public void start(){
         lmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -18,20 +19,31 @@ public class Drive extends VirusMethods {
         lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // glyphSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         cryptoboxSection=0;
-        topGrabberOpen();
+        topGrabberOpen(false);
         jewelKnockerUp();
         cube1.setPosition(0.0);
         cube2.setPosition(1);
-        glyphArm.setPosition(0);
-        glyphClaw.setPosition(1);
+        jewelKnockerBase.setPosition(.5);
+        relicArm.setPosition(0);
+        relicClaw.setPosition(0);
     }
     public void loop(){
         updateControllerValues();
         if (leftx!=0 || lefty!=0){
             runMotors(var1,var2,var2,var1,rightx); //var1 and 2 are computed values found in theUpdateControllerValues method
-        } else {
+        }
+        else if(gamepad1.dpad_left){
+            runMotors(-.35,.35,.35,-.35); //var1 and 2 are computed values found in theUpdateControllerValues method
+
+        }
+        else if(gamepad1.dpad_right){
+            runMotors(.35,-.35,-.35,35); //var1 and 2 are computed values found in theUpdateControllerValues method
+        }
+        else {
             runMotors(0,0,0,0,rightx);
         }
         if (gamepad1.right_bumper){
@@ -51,47 +63,82 @@ public class Drive extends VirusMethods {
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
         if (gamepad2.left_bumper) {
-            topGrabberOpen();
+            if (!topFullOpen){
+                topGrabberOpen(true);
+                waitTime(200); //to give some time for user to release bumper
+                topFullOpen=true;
+            }else{
+                topGrabberOpen(false);
+                waitTime(200); //to give some time for user to release bumper
+                topFullOpen=false;
+            }
+
         }
         else if (gamepad2.right_bumper) {
             topGrabberClose();
+            topFullOpen=false;
         }
         if (gamepad2.left_trigger>0.5){
-            cube1.setPosition(0.0);
-            cube2.setPosition(1);
+            if(!bottomFullOpen){
+                cube1.setPosition(.4);
+                cube2.setPosition(.6);
+                waitTime(200);
+                bottomFullOpen=true;
+            }else{
+                cube1.setPosition(0.0);
+                cube2.setPosition(1);
+                waitTime(200);
+                bottomFullOpen=false;
+            }
+
         }
         else if (gamepad2.right_trigger>0.5){
             cube1.setPosition(.6);
             cube2.setPosition(.4);
+            bottomFullOpen=false;
         }
-        liftPower(gamepad2.right_stick_y);
+
+        else{
+        }
         if (gamepad2.a){
             lift(0);
         }
         else if (gamepad2.b && !gamepad2.start){
-            lift(-2333.5);
+            lift(2200);
         }
         else if (gamepad2.y){
-            lift(-4667);
+            lift(3500);
         }
         else if (gamepad2.x){
-            lift(-7000.5);
+            lift(4500);
+        }
+        else{
+            if (liftLeft.getCurrentPosition()>4600){
+                lift(4490);
+            }
+            else if(liftLeft.getCurrentPosition()<=-50){
+                lift(10);
+            }
+            else{
+                liftPower(gamepad2.right_stick_y * -.5);
+            }
         }
         if (gamepad2.back){
             cryptoboxSection++;
         }
-//        if (gamepad2.dpad_left){
-//            glyphClaw.setPosition(.5);
-//        }
-//        else if (gamepad2.dpad_up){
-//            glyphArm.setPosition(.5);
-//        }
-//        else if (gamepad2.dpad_right){
-//            glyphClaw.setPosition(1);
-//        }
-//        else if (gamepad2.dpad_down){
-//            glyphArm.setPosition(0);
-//        }
+
+        if (gamepad2.dpad_left){
+            relicClaw.setPosition(0);
+        }
+        else if (gamepad2.dpad_up){
+            relicArm.setPosition(1);
+        }
+        else if (gamepad2.dpad_right){
+            relicClaw.setPosition(.5);
+        }
+        else if (gamepad2.dpad_down){
+            relicArm.setPosition(0.36);
+        }
         /*if (gamepad2.dpad_down){
             if (counter == 0 && lift.getPosition()>0){
                 lift.setPosition(lift.getPosition()+.05);
@@ -106,14 +153,15 @@ public class Drive extends VirusMethods {
             counter = 0;
         } */
 
-        // glyphSlide.setPower(gamepad2.left_stick_y);
-        relicRetractor.setPower(gamepad2.left_stick_y);
+        relicSlide.setPower(gamepad2.left_stick_y * 0.25);
 
-        telemetry.addData("Bottom Grabber",GPS(true));
-        telemetry.addData("Top Grabber",GPS(false));
+        //telemetry.addData("Gyro Reading",getZHeading());
+        /*telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());
         telemetry.addData("liftLeft Encoder:", liftLeft.getCurrentPosition());
         telemetry.addData("liftRight Encoder:", liftRight.getCurrentPosition());
-        // Telemetry();
+        telemetry.addData("relicArm Position: ", relicArm.getPosition());
+        telemetry.addData("relicClaw Position: ", relicClaw.getPosition());
+  */      // Telemetry();
     }
 }

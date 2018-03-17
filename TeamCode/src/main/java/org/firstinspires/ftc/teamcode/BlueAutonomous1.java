@@ -38,9 +38,8 @@ public class BlueAutonomous1 extends VirusMethods {
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
-        jewelKnockerBase.setPosition(0.5);
+        jewelKnockerBase.setPosition(0.52);
         topGrabberClose();
-        // lift.setPosition(0);
         jewelKnockerUp();
         state=state.dropArm;
     }
@@ -87,14 +86,22 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
 
             case turnBack:
-                jewelKnockerBase.setPosition(0.5);
+                jewelKnockerBase.setPosition(0.52);
                 waitTime(500);
                 position = lmotor0.getCurrentPosition();
+
                 state = state.moveUntilScanned;
                 break;
 
             case moveUntilScanned:
+
                 runMotors(.1, .1, .1, .1); //program to make it move backwards if it doesn't see it after traveling a certain distance
+                if (lmotor0.getCurrentPosition()>=position+(2/inPerPulse)){
+                    telemetry.addData("VuMark", "VuMark not found");
+                    VuMarkStored = RelicRecoveryVuMark.CENTER;
+                    amountMovedForward = (lmotor0.getCurrentPosition() - position) * inPerPulse;
+                    state = state.alignStraight;
+                }
                 if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
                     telemetry.addData("VuMark", "%s visible", vuMark);
                     VuMarkStored = vuMark;
@@ -116,14 +123,14 @@ public class BlueAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                // lift(0.15); //so that cube doesn't drag on ground
+                lift(2000); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT) {
                     if (setMotorPositionsINCH(-29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -.5)) {
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state = state.faceCryptoBox;
                     }
-                } else if (VuMarkStored == RelicRecoveryVuMark.CENTER) {
+                } else if ((VuMarkStored == RelicRecoveryVuMark.CENTER)) {
                     if (setMotorPositionsINCH(-39 - amountMovedForward, -39 - amountMovedForward, -39 - amountMovedForward, -39 - amountMovedForward, -.5)) {
                         resetEncoder();
                         state = state.faceCryptoBox;
@@ -152,12 +159,13 @@ public class BlueAutonomous1 extends VirusMethods {
                 runMotors(0.3, 0.3, 0.3, 0.3);
                 waitTime(1000);
                 runMotors(0, 0, 0, 0);
-                topGrabberOpen();
+                topGrabberOpen(true);
                 waitTime(1000);
                 runMotors(-0.3, -0.3, -0.3, -0.3);
                 waitTime(400);
                 runMotors(0, 0, 0, 0);
-                // lift(0);
+                topGrabberOpen(false);
+                lift(0);
 
                 state = state.secondRam;
 

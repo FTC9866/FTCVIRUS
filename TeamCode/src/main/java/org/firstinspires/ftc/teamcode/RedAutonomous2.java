@@ -36,7 +36,7 @@ public class RedAutonomous2 extends VirusMethods {
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
-        jewelKnockerBase.setPosition(0.5);
+        jewelKnockerBase.setPosition(0.52);
         topGrabberClose();
         // lift.setPosition(0);
         jewelKnockerUp();
@@ -84,7 +84,7 @@ public class RedAutonomous2 extends VirusMethods {
                 break;
 
             case turnBack:
-                jewelKnockerBase.setPosition(0.5);
+                jewelKnockerBase.setPosition(0.52);
                 waitTime(500);
                 position = lmotor0.getCurrentPosition();
                 state = state.moveUntilScanned;
@@ -113,7 +113,7 @@ public class RedAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
-                // lift(0.15); //so that cube doesn't drag on ground
+                lift(2000);
                 if (setMotorPositionsINCH(29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,0.5)) {
                     resetEncoder();
                     state=state.turn90;
@@ -134,7 +134,7 @@ public class RedAutonomous2 extends VirusMethods {
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(14,14,14,14, .5)){
+                    if (setMotorPositionsINCH(12.4,12.5,12.5,12.5, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
@@ -160,12 +160,13 @@ public class RedAutonomous2 extends VirusMethods {
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(1000);
                 runMotors(0,0,0,0);
-                topGrabberOpen();
+                topGrabberOpen(true);
                 waitTime(1000);
                 runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
-                // lift(0);
+                topGrabberOpen(false);
+                lift(0);
                 state = state.secondRam;
 
                 break;
