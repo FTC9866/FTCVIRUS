@@ -27,6 +27,7 @@ public abstract class VirusHardware extends OpMode {
     public ElapsedTime deltaT = new ElapsedTime();
     int initialRed=0;
     int initialBlue=0;
+    int liftPosition=0;
     DcMotor rmotor0; //0 is the front
     DcMotor lmotor0;
     DcMotor rmotor1;
@@ -82,13 +83,15 @@ public abstract class VirusHardware extends OpMode {
         //glyphSlide = hardwareMap.dcMotor.get("glyphSlide");
         liftRight = hardwareMap.dcMotor.get("liftRight");
         liftLeft = hardwareMap.dcMotor.get("liftLeft");
-        liftLeft.setDirection(DcMotor.Direction.REVERSE);
+        liftRight.setDirection(DcMotor.Direction.REVERSE);
         lmotor0.setDirection(DcMotor.Direction.REVERSE);
         lmotor1.setDirection(DcMotor.Direction.REVERSE);
         lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         cube1 = hardwareMap.servo.get("cube1");
         cube2 = hardwareMap.servo.get("cube2");
         cube3 = hardwareMap.servo.get("cube3");

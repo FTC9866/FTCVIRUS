@@ -101,18 +101,18 @@ public class Drive extends VirusMethods {
         else{
         }
         if (gamepad2.a){
-            lift(0);
+            liftPosition=0;
         }
         else if (gamepad2.b && !gamepad2.start){
-            lift(2200);
+            liftPosition=2200/3;
         }
         else if (gamepad2.y){
-            lift(3500);
+            liftPosition=3500/3;
         }
         else if (gamepad2.x){
-            lift(4500);
+            liftPosition=4500/3;
         }
-        else{
+        else if (0!=gamepad2.right_stick_y){
             if (liftLeft.getCurrentPosition()>4600){
                 lift(4490);
             }
@@ -121,7 +121,11 @@ public class Drive extends VirusMethods {
             }
             else{
                 liftPower(gamepad2.right_stick_y * -.5);
+                liftPosition=liftRight.getCurrentPosition();
             }
+        }
+        if(0==gamepad2.right_stick_y){
+            lift(liftPosition);
         }
         if (gamepad2.back){
             cryptoboxSection++;
