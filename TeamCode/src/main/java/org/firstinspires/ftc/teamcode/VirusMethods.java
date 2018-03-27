@@ -24,6 +24,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 public abstract class VirusMethods extends VirusHardware{
+    double finalRed;
+    double finalBlue;
     int counter=0;
     double position;
     double amountMovedForward;
@@ -322,14 +324,14 @@ public abstract class VirusMethods extends VirusHardware{
 
     public double getPitch(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return Orientation.secondAngle;
+        return Orientation.secondAngle-initialPitch;
     }
     public double getRoll(){
         //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return Orientation.thirdAngle;
+        return Orientation.thirdAngle-initialRoll;
     }
-    public double getRed(){return colorSensor.red()-initialRed;}
-    public double getBlue(){return colorSensor.blue()-initialBlue;}
+    public double getRed(){return colorSensor.red();}
+    public double getBlue(){return colorSensor.blue()+20;}
 
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
@@ -350,8 +352,8 @@ public abstract class VirusMethods extends VirusHardware{
         Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
     }
     public void balance(){
-        final double constant = 0.1;
-        double left0 = getPitch()*constant, left1 = getPitch()*constant, right0 = getPitch()*constant, right1 = getPitch()*constant;
+        final double constant = -0.014;
+        double left0 = getRoll()*constant, left1 = getRoll()*constant, right0 = getRoll()*constant, right1 = getRoll()*constant;
         runMotors(left0,left1,right0,right1);
     }
 

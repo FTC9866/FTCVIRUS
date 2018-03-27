@@ -59,11 +59,15 @@ public class BlueAutonomous1 extends VirusMethods {
                 break;
 
             case scanJewel:
-                if ((Math.abs(getBlue() - getRed()) > 10) && ((getBlue() / (getRed()+.01)) >= 1.5)) { //checks to see if object is more red or more blue
+                if ((Math.abs(getBlue() - getRed()) > 30) && ((getBlue() / (getRed()+.01)) >= 1.5)) { //checks to see if object is more red or more blue
                     knock = true;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
                     state = state.knockJewelLeft;
-                } else if ((Math.abs(getBlue() - getRed()) > 10) && ((getRed() / (getBlue()+.01)) >= 1.5)) {
+                } else if ((Math.abs(getBlue() - getRed()) > 30) && ((getRed() / (getBlue()+.01)) >= 1.5)) {
                     knock = false;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
                     state = state.knockJewelRight;
                 } else if (elapsedCounter.milliseconds() >= 50) {
                     elapsedCounter.reset();
@@ -203,8 +207,8 @@ public class BlueAutonomous1 extends VirusMethods {
                 runMotors(0, 0, 0, 0);
                 break;
         }
-        telemetry.addData("Amount Blue:", getBlue());
-        telemetry.addData("Amount Red:", getRed());
+        telemetry.addData("Final Blue:", finalBlue);
+        telemetry.addData("Final Red:", finalRed);
         telemetry.addData("elapsed Time:", elapsedCounter.milliseconds());
         telemetry.addData("state", state);
         telemetry.addData("Gyro Reading: ", getZHeading());

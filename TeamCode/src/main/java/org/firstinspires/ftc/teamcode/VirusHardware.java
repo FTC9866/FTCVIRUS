@@ -26,6 +26,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 public abstract class VirusHardware extends OpMode {
     public ElapsedTime deltaT = new ElapsedTime();
     int initialRed=0;
+    boolean autoBalance=false;
+    double initialRoll;
+    double initialPitch;
     int initialBlue=0;
     int liftPosition=0;
     DcMotor rmotor0; //0 is the front
@@ -103,10 +106,13 @@ public abstract class VirusHardware extends OpMode {
         relicArm = hardwareMap.servo.get("relicArm");
         relicClaw = hardwareMap.servo.get("relicClaw");
         relicSlide = hardwareMap.dcMotor.get("relicSlide");
+
     }
     public void start(){
-        initialBlue=colorSensor.blue();
-        initialRed=colorSensor.red();
+        //initialBlue=colorSensor.blue();
+        //initialRed=colorSensor.red();
+        initialPitch=Orientation.secondAngle;
+        initialRoll=Orientation.thirdAngle;
     }
 
 

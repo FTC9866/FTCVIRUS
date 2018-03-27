@@ -9,6 +9,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class Drive extends VirusMethods {
     boolean topFullOpen=false;
     boolean bottomFullOpen=false;
+    public void init(){
+        super.init();
+        initializeIMU();
+
+    }
     public void start(){
         lmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -33,7 +38,15 @@ public class Drive extends VirusMethods {
     }
     public void loop(){
         updateControllerValues();
-        if (leftx!=0 || lefty!=0){
+        updateOrientation();
+        if(gamepad1.b){
+            autoBalance=!autoBalance;
+            while(gamepad1.b);
+        }
+        if(autoBalance){
+            balance();
+        }
+        else if (leftx!=0 || lefty!=0){
             runMotors(var1,var2,var2,var1,rightx); //var1 and 2 are computed values found in theUpdateControllerValues method
         }
         else if(gamepad1.dpad_left){
@@ -159,7 +172,7 @@ public class Drive extends VirusMethods {
 
         relicSlide.setPower(gamepad2.left_stick_y * 0.25);
 
-        //telemetry.addData("Gyro Reading",getZHeading());
+        telemetry.addData("Gyro Reading",getZHeading());
         /*telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());
         telemetry.addData("liftLeft Encoder:", liftLeft.getCurrentPosition());

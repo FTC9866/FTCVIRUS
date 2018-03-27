@@ -46,6 +46,7 @@ public class RedAutonomous2 extends VirusMethods {
 
     public void loop() {
         readVumark();
+        updateOrientation();
         switch (state) {
             case dropArm:
 
@@ -57,12 +58,17 @@ public class RedAutonomous2 extends VirusMethods {
                 break;
 
             case scanJewel:
-                if ((Math.abs(getBlue() - getRed()) > 10) && ((getBlue() / (getRed()+.01)) < 1.5)) { //checks to see if object is more red or more blue
+
+                if ((Math.abs(getBlue() - getRed()) > 30) && ((getBlue() / (getRed()+.01)) > 1.5)) { //checks to see if object is more red or more blue
                     knock = true;
-                    state = state.knockJewelLeft;
-                } else if ((Math.abs(getBlue() - getRed()) > 10) && ((getRed() / (getBlue()+.01)) < 1.5)) {
-                    knock = false;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
                     state = state.knockJewelRight;
+                } else if ((Math.abs(getBlue() - getRed()) > 30) && ((getRed() / (getBlue()+.01)) > 1.5)) {
+                    knock = false;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
+                    state = state.knockJewelLeft;
                 } else if (elapsedCounter.milliseconds() >= 50) {
                     elapsedCounter.reset();
                     jewelKnockerBase.setPosition(jewelKnockerBase.getPosition() + 0.005);
@@ -194,6 +200,8 @@ public class RedAutonomous2 extends VirusMethods {
                 runMotors(0,0,0,0);
                 break;
         }
+        telemetry.addData("Final Blue:", finalBlue);
+        telemetry.addData("Final Red:", finalRed);
         telemetry.addData("Blue: true Red: false ", knock);
         telemetry.addData("state", state);
         // Telemetry();,k
