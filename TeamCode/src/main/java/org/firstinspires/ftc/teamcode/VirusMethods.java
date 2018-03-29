@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 public abstract class VirusMethods extends VirusHardware{
+    boolean mode;
     double finalRed;
     double finalBlue;
     int counter=0;

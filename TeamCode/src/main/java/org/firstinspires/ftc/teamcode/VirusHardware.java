@@ -50,6 +50,10 @@ public abstract class VirusHardware extends OpMode {
     Servo cube4;
     Servo relicArm;
     Servo relicClaw;
+    Servo grabberLeft;
+    Servo grabberRight;
+    CRServo grabberLeftSpin;
+    CRServo grabberRightSpin;
     ColorSensor colorSensor;
     ElapsedTime elapsedCounter;
     double maxPower=1;
@@ -106,7 +110,10 @@ public abstract class VirusHardware extends OpMode {
         relicArm = hardwareMap.servo.get("relicArm");
         relicClaw = hardwareMap.servo.get("relicClaw");
         relicSlide = hardwareMap.dcMotor.get("relicSlide");
-
+        grabberLeft = hardwareMap.servo.get("grabberLeft");
+        grabberRight = hardwareMap.servo.get("grabberRight");
+        grabberLeftSpin = hardwareMap.crservo.get("grabberLeftSpin");
+        grabberRightSpin = hardwareMap.crservo.get("grabberRightSpin");
     }
     public void start(){
         //initialBlue=colorSensor.blue();
