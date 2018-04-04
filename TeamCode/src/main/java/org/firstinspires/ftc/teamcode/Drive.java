@@ -44,6 +44,7 @@ public class Drive extends VirusMethods {
     public void loop() {
         updateControllerValues();
         updateOrientation();
+        //driver1
         if(gamepad1.b) {
             autoBalance = !autoBalance;
             while(gamepad1.b);
@@ -80,8 +81,8 @@ public class Drive extends VirusMethods {
             rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+        //driver2
         if (mode) {
-
             if (gamepad2.left_bumper) {
                 if (!topFullOpen) {
                     topGrabberOpen(true);
@@ -98,6 +99,7 @@ public class Drive extends VirusMethods {
                 topGrabberClose();
                 topFullOpen = false;
             }
+
             if (gamepad2.left_trigger>0.5) {
                 if(!bottomFullOpen){
                     cube1.setPosition(.4);
@@ -110,22 +112,33 @@ public class Drive extends VirusMethods {
                     waitTime(200);
                     bottomFullOpen = false;
                 }
-
-            } else if (gamepad2.right_trigger>0.5) {
+            }
+            else if (gamepad2.right_trigger>0.5) {
                 cube1.setPosition(.6);
                 cube2.setPosition(.4);
                 bottomFullOpen = false;
-            } else {
             }
             if (gamepad2.a) {
                 liftPosition = 0;
-            } else if (gamepad2.b && !gamepad2.start) {
+            }
+            else if (gamepad2.b && !gamepad2.start) {
                 liftPosition = (2200/3);
-            } else if (gamepad2.y) {
+                if(grabberLeft.getPosition()<=.9&&liftPosition==0){
+                    grabberLeft.setPosition(.9);
+                    grabberRight.setPosition(.1);
+                }
+            }
+            else if (gamepad2.y) {
                 liftPosition = (3500/3);
-            } else if (gamepad2.x) {
+            }
+            else if (gamepad2.x) {
                 liftPosition = (4500/3);
-            } else if (0!=gamepad2.right_stick_y) {
+            }
+            if((grabberLeft.getPosition()==.9&&grabberRight.getPosition()==.1)&&(liftLeft.getCurrentPosition()>2100/3&&liftLeft.getCurrentPosition()>2100)){
+                grabberLeft.setPosition(1);
+                grabberRight.setPosition(0);
+            }
+            else if (0!=gamepad2.right_stick_y) {
                 if (liftLeft.getCurrentPosition()>4600) {
                     lift(4490);
                 } else if(liftLeft.getCurrentPosition()<=-50 ){
@@ -139,29 +152,39 @@ public class Drive extends VirusMethods {
             if (gamepad2.dpad_down) {
                 grabberLeft.setPosition(0);
                 grabberRight.setPosition(1);
-            } else if (gamepad2.dpad_up) {
+                grabberLeftSpin.setPower(0);
+                grabberRightSpin.setPower(0);
+            }
+            else if (gamepad2.dpad_up) {
                 if (grabberLeft.getPosition() == 0) {
                     grabberLeft.setPosition(1);
                     grabberRight.setPosition(0);
-                } else if (grabberLeft.getPosition() == 1) {
-
-                    grabberLeftSpin.setPower(-1 * grabberLeftSpin.getPower());
-                    while(gamepad2.dpad_up);
                 }
-            } else if (gamepad2.dpad_right) {
-                if (grabberRight.getPosition() == 0) {
-                    grabberRight.setPosition(0.2);
-                    while(gamepad2.dpad_right);
-                    grabberRight.setPosition(0);
-                }
-            } else if (gamepad2.dpad_left) {
-                if (grabberLeft.getPosition() == 1) {
-                    grabberLeft.setPosition(0.8);
-                    while (gamepad2.dpad_left) ;
-                    grabberLeft.setPosition(1);
+                else if (grabberLeft.getPosition() == 1) {
+                    grabberLeftSpin.setPower(1);
+                    grabberRightSpin.setPower(-1);
                 }
             }
-        } else {
+            else if (grabberLeft.getPosition() == 1){
+                grabberLeftSpin.setPower(-1);
+                grabberRightSpin.setPower(1);
+            }
+            else if (gamepad2.dpad_right) {
+                if (grabberRight.getPosition() == 0) {
+                    grabberRight.setPosition(0.1);
+                }
+            }
+            else if (gamepad2.dpad_left) {
+                if (grabberLeft.getPosition() == 1) {
+                    grabberLeft.setPosition(0.9);
+                }
+            }
+            else if (grabberRight.getPosition()==.1||grabberLeft.getPosition()==.9) {
+                grabberLeft.setPosition(1);
+                grabberRight.setPosition(0);
+            }
+        }
+        else {
             if (gamepad2.right_bumper) {
                 relicClaw.setPosition(.5);
             }
@@ -178,18 +201,15 @@ public class Drive extends VirusMethods {
             }
         }
 
-
-
-
-
         if(0==gamepad2.right_stick_y){
             lift(liftPosition);
         }
+
         if (gamepad2.start && !gamepad2.b){
             cryptoboxSection++;
         }
-        if (gamepad2.back){
 
+        if (gamepad2.back){
             mode = !mode;
             while(gamepad2.back);
         }
