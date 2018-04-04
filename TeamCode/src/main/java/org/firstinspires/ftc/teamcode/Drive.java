@@ -12,7 +12,9 @@ public class Drive extends VirusMethods {
     boolean bottomFullOpen=false;
     public void init() {
         super.init();
-        initializeIMU();
+        if(!imu.isGyroCalibrated()){
+            initializeIMU();
+        }
     }
     public void start() {
         lmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
