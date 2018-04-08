@@ -213,17 +213,17 @@ public abstract class VirusMethods extends VirusHardware{
     }
     public void topGrabberOpen(boolean semi){
         if(semi){
-            cube3.setPosition(.27);
-            cube4.setPosition(.73);
+            cube3.setPosition(.55);
+            cube4.setPosition(.45);
         }else{
-            cube3.setPosition(.15);
-            cube4.setPosition(.85);
+            cube3.setPosition(.55);
+            cube4.setPosition(.45);
         }
 
     }
     public void topGrabberClose(){
-        cube3.setPosition(.6);
-        cube4.setPosition(.4);
+        cube3.setPosition(.8);
+        cube4.setPosition(.3);
     }
     public String GPS(boolean bottom){
         int bottomx;

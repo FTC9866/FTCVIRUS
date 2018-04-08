@@ -33,8 +33,8 @@ public class Drive extends VirusMethods {
         topGrabberOpen(false);
         jewelKnockerUp();
 
-        cube1.setPosition(0.0);
-        cube2.setPosition(1);
+        cube1.setPosition(.25);
+        cube2.setPosition(.7);
         jewelKnockerBase.setPosition(.5);
         relicArm.setPosition(0);
         relicClaw.setPosition(0);
@@ -112,8 +112,8 @@ public class Drive extends VirusMethods {
                     waitTime(200);
                     bottomFullOpen = true;
                 } else {
-                    cube1.setPosition(0.0);
-                    cube2.setPosition(1);
+                    cube1.setPosition(0.25);
+                    cube2.setPosition(.7);
                     waitTime(200);
                     bottomFullOpen = false;
                 }
@@ -125,6 +125,9 @@ public class Drive extends VirusMethods {
             }
             if (gamepad2.a) {
                 liftPosition = 0;
+                cube1.setPosition(0.25);
+                cube2.setPosition(.7);
+                bottomFullOpen = false;
             }
             else if (gamepad2.b && !gamepad2.start) {
                 liftPosition = (2200/3);
@@ -141,7 +144,7 @@ public class Drive extends VirusMethods {
                 grabberRightSpin.setPower(0);
             }
             else if (gamepad2.x) {
-                liftPosition = (4500/3);
+                liftPosition = (4400/3);
                 grabberLeft.setPosition(0);
                 grabberRight.setPosition(1);
                 grabberLeftSpin.setPower(0);
