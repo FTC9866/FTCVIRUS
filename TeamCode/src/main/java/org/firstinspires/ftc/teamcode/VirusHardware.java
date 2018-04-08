@@ -120,6 +120,7 @@ public abstract class VirusHardware extends OpMode {
         //initialRed=colorSensor.red();
         initialPitch=Orientation.secondAngle;
         initialRoll=Orientation.thirdAngle;
+        deltaT.reset();
     }
 
 

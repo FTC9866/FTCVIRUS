@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 @Autonomous(name="BlueAutonomous1", group="Autonomous")
 
 public class BlueAutonomous1 extends VirusMethods {
-    enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, turnBack, toCryptoBoxpart1, turn90, toCryptoBoxpart2, secondRam, turnAround, grab, moveUntilScanned}
+    enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, turnBack, toCryptoBoxpart1, turn90, toCryptoBoxpart2, secondRam, turnAround, grab, backUp, backUp2, turnAround2, insertCube2, moveUntilScanned}
     state state;
     boolean setMotor;
     boolean knock;
@@ -25,7 +25,6 @@ public class BlueAutonomous1 extends VirusMethods {
     public void init() {
         super.init();
         initializeIMU();
-
     }
 
     public void start() {
