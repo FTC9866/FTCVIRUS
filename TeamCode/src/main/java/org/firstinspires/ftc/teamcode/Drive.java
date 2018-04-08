@@ -46,27 +46,30 @@ public class Drive extends VirusMethods {
     public void loop() {
         updateControllerValues();
         updateOrientation();
+
         //driver1
         if(gamepad1.b) {
             autoBalance = !autoBalance;
             while(gamepad1.b);
         }
+
         if(autoBalance) {
             balance();
-        }
-        else if (leftx!=0 || lefty!=0) {
+        } else if (leftx!=0 || lefty!=0) {
             runMotors(var1, var2, var2, var1, rightx); //var1 and 2 are computed values found in theUpdateControllerValues method
-        }
-        else if(gamepad1.dpad_left) {
+        } else if(gamepad1.dpad_left) {
             runMotors(-.35,.35,.35,-.35); //var1 and 2 are computed values found in theUpdateControllerValues method
 
-        }
-        else if(gamepad1.dpad_right) {
+        } else if(gamepad1.dpad_right) {
             runMotors(.35,-.35,-.35,35); //var1 and 2 are computed values found in theUpdateControllerValues method
-        }
-        else {
+        } else {
             runMotors(0,0,0,0,rightx);
         }
+
+        if (gamepad1.y) {
+            snap90();
+        }
+
         if (gamepad1.right_bumper) {
             maxPower = 1;
             maxSteerPower = 1;
@@ -74,8 +77,7 @@ public class Drive extends VirusMethods {
             lmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
-        else if (gamepad1.left_bumper) {
+        } else if (gamepad1.left_bumper) {
             maxPower = 0.75;
             maxSteerPower = 0.3;
             lmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -83,6 +85,7 @@ public class Drive extends VirusMethods {
             rmotor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rmotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
         //driver2
         if (mode) {
             if (gamepad2.left_bumper) {
@@ -132,15 +135,23 @@ public class Drive extends VirusMethods {
             }
             else if (gamepad2.y) {
                 liftPosition = (3500/3);
+                grabberLeft.setPosition(0);
+                grabberRight.setPosition(1);
+                grabberLeftSpin.setPower(0);
+                grabberRightSpin.setPower(0);
             }
             else if (gamepad2.x) {
                 liftPosition = (4500/3);
+                grabberLeft.setPosition(0);
+                grabberRight.setPosition(1);
+                grabberLeftSpin.setPower(0);
+                grabberRightSpin.setPower(0);
             }
             if((grabberLeft.getPosition()==.9&&grabberRight.getPosition()==.1)&&(liftLeft.getCurrentPosition()>2100/3&&liftLeft.getCurrentPosition()>2100)){
                 grabberLeft.setPosition(1);
                 grabberRight.setPosition(0);
             }
-            else if (0!=gamepad2.right_stick_y) {
+            else if (0 != gamepad2.right_stick_y) {
                 if (liftLeft.getCurrentPosition()>4600) {
                     lift(4490);
                 } else if(liftLeft.getCurrentPosition()<=-50 ){
@@ -161,6 +172,8 @@ public class Drive extends VirusMethods {
                 if (grabberLeft.getPosition() == 0) {
                     grabberLeft.setPosition(1);
                     grabberRight.setPosition(0);
+                    grabberLeftSpin.setPower(-1);
+                    grabberRightSpin.setPower(1);
                 }
                 else if (grabberLeft.getPosition() == 1) {
                     grabberLeftSpin.setPower(1);

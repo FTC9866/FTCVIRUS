@@ -47,14 +47,16 @@ public class RedAutonomous1 extends VirusMethods {
     public void loop() {
         readVumark();
         updateOrientation();
+        lift(liftPosition);
+
         switch (state) {
             case dropArm:
 
                 jewelKnockerDown();
-                colorSensor.enableLed(true);
                 waitTime(1000);
                 resetEncoder();
-                state=state.scanJewel;
+                state = state.scanJewel;
+                elapsedCounter.reset();
                 break;
 
             case scanJewel:
@@ -118,7 +120,7 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                lift(2000); //so that cube doesn't drag on ground
+                liftPosition = (2200/3);
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
                     if (setMotorPositionsINCH(45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
@@ -143,35 +145,106 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case faceCryptoBox:
-                if (turn(90,.75)) {
+                if (turn(90,1)) {
                     resetEncoder();
                     state=state.placeGlyph;
                 }
                 break;
             case placeGlyph:
-                runMotors(0.3,0.3,0.3,0.3);
-                waitTime(1000);
+                lift(50);
+                if(setMotorPositionsINCH(7,7,7,7,.5)){
+                    topGrabberOpen(true);
+                    if (deltaT.seconds()<60){
+                        state = state.backUp;
+                        resetEncoder();
+                    }else{
+                        state = state.stop;
+                    }
+                }
+                /*runMotors(0.3,0.3,0.3,0.3);
+                waitTime(400);
                 runMotors(0,0,0,0);
                 topGrabberOpen(true);
-                waitTime(1000);
+                waitTime(400);
                 runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
                 topGrabberOpen(false);
                 lift(0);
-                state = state.secondRam;
-
+                if (deltaT.seconds()<60){
+                    state = state.backUp;
+                }else{
+                    state = state.stop;
+                }*/
                 break;
             case secondRam:
-                waitTime(1000);
+                waitTime(400);
                 runMotors(0.3,0.3,0.3,0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
-                waitTime(1000);
+                waitTime(400);
                 runMotors(-0.3,-0.3,-0.3,-0.3);
                 waitTime(400);
                 runMotors(0,0,0,0);
-                state = state.stop;
+                if (deltaT.seconds()<50){
+                    state = state.backUp;
+                    resetEncoder();
+                }else{
+                    state = state.stop;
+                }
+
+                break;
+            case backUp:
+                if (setMotorPositionsINCH(-12,-12,-12,-12,-0.5)){
+                    resetEncoder();
+                    topGrabberOpen(false);
+                    liftPosition = 10;
+                    state = state.turnAround;
+                }
+                break;
+            case turnAround:
+                if (turn(270,0.5)){
+                    grabberLeft.setPosition(1);
+                    grabberRight.setPosition(0);
+                    grabberLeftSpin.setPower(-1);
+                    grabberRightSpin.setPower(1);
+                    waitTime(1000);
+                    state = state.grab;
+                    resetEncoder();
+                }
+                break;
+            case grab:
+                if (setMotorPositionsINCH(36,36,36,36,0.5)){
+                    cube3.setPosition(.6);
+                    cube4.setPosition(.4);
+                    liftPosition = (2200/3);
+                    state = state.backUp2;
+                    resetEncoder();
+                }  //back up, retract spinners, turn around, drop off
+                break;
+            case backUp2:
+                grabberLeftSpin.setPower(0);
+                grabberRightSpin.setPower(0);
+                if (setMotorPositionsINCH(-24,-24,-24,-24,-0.5)){
+                    grabberLeft.setPosition(0);
+                    grabberRight.setPosition(1);
+                    state = state.turnAround2;
+                    resetEncoder();
+                }
+                break;
+            case turnAround2:
+                if (turn(90,1)){
+                    state = state.insertCube2;
+                    resetEncoder();
+                }
+                break;
+            case insertCube2:
+                if (setMotorPositionsINCH(24,24,24,24,0.5)){
+                    grabberLeft.setPosition(0);
+                    grabberRight.setPosition(1);
+                    state = state.placeGlyph;
+                    resetEncoder();
+                }
                 break;
             case debug:
                 //telemetry.addData("done","done");

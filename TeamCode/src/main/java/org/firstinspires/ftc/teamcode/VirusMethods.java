@@ -34,9 +34,10 @@ public abstract class VirusMethods extends VirusHardware{
     double angleRel;
     boolean patternFound;
     double maxDisplacement;
-    double threshold = .25;
+    double threshold = .5;
     boolean triggered;
     int cryptoboxSection;
+    ElapsedTime elapsedTime = new ElapsedTime();
     String[][]cryptobox = {{"brown","gray","gray"},{"brown","brown","gray"},{"gray","brown","brown"},{"gray","gray","brown"}};
     public void runMotors(double Left0, double Left1, double Right0, double Right1, double steerMagnitude){
         if (Left0!=0&&Left1!=0&&Right0!=0&&Right1!=0) {
@@ -115,7 +116,7 @@ public abstract class VirusMethods extends VirusHardware{
         angle=360-angle;
         double currentAngle = getZHeading();
         angleRel = relativeAngle(angle, currentAngle); //should be distance from current angle (negative if to the counterclockwise, positive if to the clockwise)
-        turnRate = speed*angleRel/90;
+        turnRate = speed*angleRel/60;
         if (turnRate<0){
             turnRate-=.025;
         }
@@ -352,6 +353,20 @@ public abstract class VirusMethods extends VirusHardware{
     public void updateOrientation (){
         Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
     }
+
+    public void snap90() {
+
+        int snappedAngle = (int) (this.getZHeading() / 45);
+
+        if (snappedAngle % 2 != 0) {
+            snappedAngle++;
+        }
+
+        snappedAngle *= 45;
+
+        turn(snappedAngle, 0.5);
+    }
+
     public void balance(){
         final double constant = -0.014;
         double left0 = getRoll()*constant, left1 = getRoll()*constant, right0 = getRoll()*constant, right1 = getRoll()*constant;
