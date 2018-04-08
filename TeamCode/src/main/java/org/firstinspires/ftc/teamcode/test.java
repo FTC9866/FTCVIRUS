@@ -11,6 +11,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class test extends VirusMethods{
     enum state  {goToPosition,scanJewel,knockJewelRight, knockJewelLeft, stop, debug}
     state state;
+    int counter = 0;
+    boolean topFullOpen=false;
+    boolean bottomFullOpen=false;
+    public void init(){
+        super.init();
+        initializeIMU();
+        //while (!imu.isSystemCalibrated());
+    }
 
     public void start(){
         lmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -18,25 +26,29 @@ public class test extends VirusMethods{
         rmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         resetEncoder();
+        topGrabberOpen(false);
+        jewelKnockerUp();
+        cube1.setPosition(0.0);
+        cube2.setPosition(1);
         state=state.goToPosition;
 
     }
     @Override
     public void loop(){
-      switch (state) {
-          case goToPosition:
-              if (turn(90,1)) {
-                  state=state.stop;
-              }
-              break;
-          case stop:
-              runMotors(0, 0, 0, 0);
-              telemetry.addData("state", state);
-              break;
-
+        updateOrientation();
+        updateControllerValues();
+         switch (state){
+            case goToPosition:
+                jewelKnockerDown();
+                colorSensor.enableLed(true);
+                state = state.stop;
+                break;
+            case stop:
+                runMotors(0,0,0,0);
+                break;
         }
-        telemetry.addData("angle remaining", angleRel);;
-
+        telemetry.addData("Blue",getBlue());
+        telemetry.addData("Red",getRed());
     }
 
 

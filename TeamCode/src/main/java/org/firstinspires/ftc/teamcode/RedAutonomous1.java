@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 
-@TeleOp(name="RedAutonomous1", group="TeleOp")
+@Autonomous(name="RedAutonomous1", group="Autonomous")
 
 public class RedAutonomous1 extends VirusMethods {
     enum state  {dropArm,scanJewel,knockJewelRight, knockJewelLeft, stop, goToPosition, debug, alignStraight, toCryptoBox, backOnStone, faceCryptoBox, placeGlyph, turnBackLeft, turnBackRight, moveUnitlScanned}
@@ -22,47 +22,35 @@ public class RedAutonomous1 extends VirusMethods {
 
     public void init() {
         super.init();
-        vuforiaInit();
+        initializeIMU();
     }
 
     public void start() {
+        super.start();
+        vuforiaInit();
+
         lmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor0.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rmotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         cube1.setPosition(0);
         cube2.setPosition(1);
+        jewelKnockerBase.setPosition(0.52);
         topGrabberClose();
-        lift.setPosition(0);
-        jewelKnocker.setPosition(0);
-        lift.setPosition(0);
-        jewelKnocker.setPosition(0);
+        // lift.setPosition(0);
+        jewelKnockerUp();
         state=state.dropArm;
 
     }
     @Override
 
     public void loop() {
-        vuMark = RelicRecoveryVuMark.from(relicTemplate);
-        pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-        if (pose != null) {
-            VectorF trans = pose.getTranslation();
-            Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-            // Extract the X, Y, and Z components of the offset of the target relative to the robot
-            double tX = trans.get(0);
-            double tY = trans.get(1);
-            double tZ = trans.get(2);
-
-            // Extract the rotational components of the target relative to the robot
-            double rX = rot.firstAngle;
-            double rY = rot.secondAngle;
-            double rZ = rot.thirdAngle;
-        }
+        readVumark();
+        updateOrientation();
         switch (state) {
             case dropArm:
 
-                jewelKnocker.setPosition(0.65);
+                jewelKnockerDown();
                 colorSensor.enableLed(true);
                 waitTime(1000);
                 resetEncoder();
@@ -70,45 +58,40 @@ public class RedAutonomous1 extends VirusMethods {
                 break;
 
             case scanJewel:
-                //checks to see if object is more red or more blue
-                if (colorSensor.red() < colorSensor.blue()) { //if right side jewel is blue
-                    knock  = true;
-                    colorSensor.enableLed(false);
-                    state=state.knockJewelRight;
-                }
-                else if (colorSensor.blue() < colorSensor.red()) { //if right side jewel is red
+                if ((Math.abs(getBlue() - getRed()) > 30) && ((getBlue() / (getRed()+.01)) > 1.5)) { //checks to see if object is more red or more blue
+                    knock = true;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
+                    state = state.knockJewelRight;
+                } else if ((Math.abs(getBlue() - getRed()) > 30) && ((getRed() / (getBlue()+.01)) > 1.5)) {
                     knock = false;
-                    state=state.knockJewelLeft;
+                    finalBlue = getBlue();
+                    finalRed = getRed();
+                    state = state.knockJewelLeft;
+                } else if (elapsedCounter.milliseconds() >= 50) {
+                    elapsedCounter.reset();
+                    jewelKnockerBase.setPosition(jewelKnockerBase.getPosition() + 0.005);
                 }
                 break;
 
             case knockJewelLeft:
-                if (turn(345, 0.7)){
-                    jewelKnocker.setPosition(0);
-                    state=state.turnBack;
-                }
+                jewelKnockerBase.setPosition(.25);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
             case knockJewelRight:
-                if (turn(15, 0.7)) {
-                    jewelKnocker.setPosition(0);
-                    state = state.turnBack;
-                }
-                break;
-            case turnBack:
-                if (turn(0, 0.7)){
-                    position = lmotor0.getCurrentPosition();
-                    state = state.moveUntilScanned;
-                }
-                break;
-            //turnBackLeft and turnBackRight might be needed if turnMotorsPlus method doesn't work
-            case turnBackLeft:
-                turnMotors(0, true, 0.3);
-                state = state.moveUntilScanned;
+                jewelKnockerBase.setPosition(.75);
+                waitTime(500);
+                jewelKnockerUp();
+                state = state.turnBack;
                 break;
 
-            case turnBackRight:
-                turnMotors(0, false, 0.3);
+            case turnBack:
+                jewelKnockerBase.setPosition(0.52);
+                waitTime(500);
+                position = lmotor0.getCurrentPosition();
                 state = state.moveUntilScanned;
                 break;
 
@@ -135,20 +118,20 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                lift(0.03); //so that cube doesn't drag on ground
+                lift(2000); //so that cube doesn't drag on ground
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
-                    if (setMotorPositionsINCH(44-amountMovedForward,44-amountMovedForward,44-amountMovedForward,44-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
+                    if (setMotorPositionsINCH(45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
                         telemetry.addData("reee", "e");
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.CENTER){
-                    if (setMotorPositionsINCH(36-amountMovedForward,36-amountMovedForward,36-amountMovedForward,36-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(39.5-amountMovedForward,39.5-amountMovedForward,39.5-amountMovedForward,39.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
                 }else if (VuMarkStored == RelicRecoveryVuMark.RIGHT){
-                    if (setMotorPositionsINCH(30-amountMovedForward,30-amountMovedForward,30-amountMovedForward,30-amountMovedForward, .5)){
+                    if (setMotorPositionsINCH(32.5-amountMovedForward,32.5-amountMovedForward,32.5-amountMovedForward,32.5-amountMovedForward, .5)){
                         resetEncoder();
                         state=state.faceCryptoBox;
                     }
@@ -166,12 +149,27 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case placeGlyph:
-                runMotors(0.5,0.5,0.5,0.5);
-                waitTime(500);
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(1000);
                 runMotors(0,0,0,0);
-                topGrabberOpen();
-                runMotors(-0.5,-0.5,-0.5,-0.5);
-                waitTime(500);
+                topGrabberOpen(true);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                topGrabberOpen(false);
+                lift(0);
+                state = state.secondRam;
+
+                break;
+            case secondRam:
+                waitTime(1000);
+                runMotors(0.3,0.3,0.3,0.3);
+                waitTime(400);
+                runMotors(0,0,0,0);
+                waitTime(1000);
+                runMotors(-0.3,-0.3,-0.3,-0.3);
+                waitTime(400);
                 runMotors(0,0,0,0);
                 state = state.stop;
                 break;
@@ -188,6 +186,8 @@ public class RedAutonomous1 extends VirusMethods {
                 runMotors(0,0,0,0);
                 break;
         }
+        telemetry.addData("Final Blue:", finalBlue);
+        telemetry.addData("Final Red:", finalRed);
         telemetry.addData("Blue: true Red: false ", knock);
         telemetry.addData("state", state);
         // Telemetry();,k

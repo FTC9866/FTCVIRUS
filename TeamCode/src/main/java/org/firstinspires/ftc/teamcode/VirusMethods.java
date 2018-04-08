@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.view.OrientationEventListener;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.AccelerationSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -15,30 +21,31 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 public abstract class VirusMethods extends VirusHardware{
+    boolean mode;
+    double finalRed;
+    double finalBlue;
     int counter=0;
     double position;
     double amountMovedForward;
     double turnRate;
     double angleRel;
+    boolean patternFound;
+    double maxDisplacement;
+    double threshold = .25;
+    boolean triggered;
     int cryptoboxSection;
     String[][]cryptobox = {{"brown","gray","gray"},{"brown","brown","gray"},{"gray","brown","brown"},{"gray","gray","brown"}};
-    /*
-        runMotors Method uses double values to set a constant speed for the wheel motors (setPower), two on each side. It also includes
-        a steer magnitude in order to offset wheels so they can turn.
-        0 = front wheel
-        1 = backwheel
-        SteerMagnitude = offset for wheels to turn
-     */
     public void runMotors(double Left0, double Left1, double Right0, double Right1, double steerMagnitude){
         if (Left0!=0&&Left1!=0&&Right0!=0&&Right1!=0) {
             steerMagnitude *= 2 * Math.max(Math.max(Left0, Left1), Math.max(Right0, Right1));
         }
-        Left0=Left0+steerMagnitude;
-        Left1=Left1+steerMagnitude;
-        Right0=Right0-steerMagnitude;
-        Right1=Right1-steerMagnitude;
+        Left0=Left0+maxSteerPower*steerMagnitude;
+        Left1=Left1+maxSteerPower*steerMagnitude;
+        Right0=Right0-maxSteerPower*steerMagnitude;
+        Right1=Right1-maxSteerPower*steerMagnitude;
         //make sure no exception thrown if power > 0
         Left0 = Range.clip(Left0, -maxPower, maxPower);
         Left1 = Range.clip(Left1, -maxPower, maxPower);
@@ -51,7 +58,19 @@ public abstract class VirusMethods extends VirusHardware{
     }
 
     public void runMotors(double Left0, double Left1, double Right0, double Right1){
-        runMotors(Left0, Left1, Right0, Right1, 0);
+        lmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rmotor0.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rmotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //make sure no exception thrown if power > 0
+        Left0 = Range.clip(Left0, -maxPower, maxPower);
+        Left1 = Range.clip(Left1, -maxPower, maxPower);
+        Right0 = Range.clip(Right0, -maxPower, maxPower);
+        Right1 = Range.clip(Right1, -maxPower, maxPower);
+        rmotor0.setPower(Right0);
+        rmotor1.setPower(Right1);
+        lmotor0.setPower(Left0);
+        lmotor1.setPower(Left1);
     }
     public void runMotorsAuto(double Left0, double Left1, double Right0, double Right1){
         //make sure no exception thrown if power > 0
@@ -64,10 +83,6 @@ public abstract class VirusMethods extends VirusHardware{
         lmotor0.setPower(Left0);
         lmotor1.setPower(Left1);
     }
-    /*
-    setMotorPositions uses uses encoders to move a certain distance in encoder units.
-     */
-
     public boolean setMotorPositions(int Left0, int Left1, int Right0, int Right1, double power) {
         if (counter == 0) { //makes sure this is only run once, reset back to 0 when OpMode starts or resetEncoders is called
             lmotor0.setTargetPosition(Left0);
@@ -95,21 +110,26 @@ public abstract class VirusMethods extends VirusHardware{
         }
         return (!lmotor0.isBusy() && !lmotor1.isBusy() && !rmotor0.isBusy() && !rmotor1.isBusy()); //returns true when motors are not busy
     }
-/*
-turn requires an angle and a speed to allow the robot to rotate to the specified angle using the shortest distance
- */
+
     public boolean turn(double angle, double speed){
         angle=360-angle;
-        double threshold = 1;
-        // threshold is a margin of error of one degree of the specified angle, the robot will stop.
-        double currentAngle = gyroSensor.getHeading();
+        double currentAngle = getZHeading();
         angleRel = relativeAngle(angle, currentAngle); //should be distance from current angle (negative if to the counterclockwise, positive if to the clockwise)
         turnRate = speed*angleRel/90;
+        if (turnRate<0){
+            turnRate-=.025;
+        }
+        else if(turnRate>0){
+            turnRate+=.025;
+        }
         runMotors(turnRate, turnRate, -turnRate, -turnRate); //negative turnRate will result in a left turn
         if (angleRel<=threshold && angleRel>=-threshold) { //approaching from either side
             return true;
         }
         return false;
+    }
+    public void setThreshold(double newThreshold){
+        threshold = newThreshold;
     }
     private double relativeAngle(double angle, double currentAngle){
         double currentAngleRel = angle-currentAngle;
@@ -156,6 +176,8 @@ turn requires an angle and a speed to allow the robot to rotate to the specified
         double magnitude = Math.sqrt(lefty*lefty+leftx*leftx);
         var1= (lefty-leftx)*magnitude/scalar;
         var2= (lefty+leftx)*magnitude/scalar;
+        var1*=maxPower;
+        var2*=maxPower;
     }
     public void vuforiaInit(){
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -168,12 +190,35 @@ turn requires an angle and a speed to allow the robot to rotate to the specified
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
         relicTrackables.activate();
     }
+
     public void lift(double position) {
-        lift.setPosition(position);
+        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftLeft.setPower(-1);
+        liftRight.setPower(-1);
+        liftLeft.setTargetPosition((int) position);
+        liftRight.setTargetPosition((int) position);
+        if ((!liftLeft.isBusy())&&(!liftRight.isBusy())) {
+            liftLeft.setPower(0);
+            liftRight.setPower(0);
+        }
     }
-    public void topGrabberOpen(){
-        cube3.setPosition(.25);
-        cube4.setPosition(.75);
+
+    public void liftPower(double power){
+        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftLeft.setPower(power);
+        liftRight.setPower(power);
+    }
+    public void topGrabberOpen(boolean semi){
+        if(semi){
+            cube3.setPosition(.27);
+            cube4.setPosition(.73);
+        }else{
+            cube3.setPosition(.15);
+            cube4.setPosition(.85);
+        }
+
     }
     public void topGrabberClose(){
         cube3.setPosition(.6);
@@ -216,9 +261,79 @@ turn requires an angle and a speed to allow the robot to rotate to the specified
             return "Right";
         }
     }
+    public void jewelKnockerUp(){
+        jewelKnocker.setPosition(.1);
+    }
+    public void jewelKnockerDown(){
+        jewelKnocker.setPosition(0.66);
+    }
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
+    public void readVumark(){
+        vuMark = RelicRecoveryVuMark.from(relicTemplate);
+        pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+        if (pose != null) {
+            VectorF trans = pose.getTranslation();
+            Orientation rot = Orientation.getOrientation(pose, AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+
+            // Extract the X, Y, and Z components of the offset of the target relative to the robot
+            double tX = trans.get(0);
+            double tY = trans.get(1);
+            double tZ = trans.get(2);
+
+            // Extract the rotational components of the target relative to the robot
+            double rX = rot.firstAngle;
+            double rY = rot.secondAngle;
+            double rZ = rot.thirdAngle;
+        }
+    }
+
+    public void initializeIMU(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu.initialize(parameters);
+    }
+
+    public double getZHeading(){
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+       /* if(Orientation.firstAngle<0){
+            return Orientation.firstAngle*-1;
+        }else if(Orientation.firstAngle>0){
+            return 360-Orientation.firstAngle;
+        }
+        else{
+            return 0;
+        }*/
+        if(Orientation.firstAngle<0){
+            return 360+Orientation.firstAngle;
+        }else if(Orientation.firstAngle>0){
+            return Orientation.firstAngle;
+        }
+        else{
+            return 0;
+        }
+    }
+    public double getRawZHeading(){
+        return Orientation.firstAngle;
+    }
+
+    public double getPitch(){
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return Orientation.secondAngle-initialPitch;
+    }
+    public double getRoll(){
+        //Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return Orientation.thirdAngle-initialRoll;
+    }
+    public double getRed(){return colorSensor.red();}
+    public double getBlue(){return colorSensor.blue()+20;}
+
     public void Telemetry(){
         telemetry.addData("Red",colorSensor.red());
         telemetry.addData("Green",colorSensor.green());
@@ -233,8 +348,14 @@ turn requires an angle and a speed to allow the robot to rotate to the specified
         telemetry.addData("lMotor1 Target",lmotor1.getTargetPosition());
         telemetry.addData("rMotor0 Target",rmotor0.getTargetPosition());
         telemetry.addData("rMotor1 Target",rmotor1.getTargetPosition());
-
-
-
     }
+    public void updateOrientation (){
+        Orientation = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+    }
+    public void balance(){
+        final double constant = -0.014;
+        double left0 = getRoll()*constant, left1 = getRoll()*constant, right0 = getRoll()*constant, right1 = getRoll()*constant;
+        runMotors(left0,left1,right0,right1);
+    }
+
 }
