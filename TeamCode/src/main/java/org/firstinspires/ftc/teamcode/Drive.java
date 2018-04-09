@@ -52,7 +52,10 @@ public class Drive extends VirusMethods {
             autoBalance = !autoBalance;
             while(gamepad1.b);
         }
-
+        if (gamepad2.back){
+            mode = !mode;
+            while(gamepad2.back);
+        }
         if(autoBalance) {
             balance();
         } else if (leftx!=0 || lefty!=0) {
@@ -227,10 +230,7 @@ public class Drive extends VirusMethods {
             cryptoboxSection++;
         }
 
-        if (gamepad2.back){
-            mode = !mode;
-            while(gamepad2.back);
-        }
+
 
         if (gamepad2.dpad_left){
             relicClaw.setPosition(0);
@@ -260,7 +260,8 @@ public class Drive extends VirusMethods {
 
         relicSlide.setPower(gamepad2.left_stick_y * 0.25);
 
-        telemetry.addData("Gyro Reading",getZHeading());
+        telemetry.addData("Gyro Reading",  getZHeading());
+        telemetry.addData("Mode", mode);
         /*telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());
         telemetry.addData("liftLeft Encoder:", liftLeft.getCurrentPosition());

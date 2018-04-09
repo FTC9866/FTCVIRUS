@@ -222,7 +222,7 @@ public abstract class VirusMethods extends VirusHardware{
 
     }
     public void topGrabberClose(){
-        cube3.setPosition(.8);
+        cube3.setPosition(.7);
         cube4.setPosition(.3);
     }
     public String GPS(boolean bottom){
