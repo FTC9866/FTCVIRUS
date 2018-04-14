@@ -119,7 +119,8 @@ public class BlueAutonomous2 extends VirusMethods {
                 break;
 
             case toCryptoBoxpart1:
-                lift(2000); //so that cube doesn't drag on ground
+                liftPosition = (2200/3);
+                lift(liftPosition);
                 if (setMotorPositionsINCH(-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-24.5-amountMovedForward,-.5)){
                     resetEncoder();
                     state = state.turn90;
@@ -176,7 +177,8 @@ public class BlueAutonomous2 extends VirusMethods {
                 waitTime(400);
                 runMotors(0,0,0,0);
                 topGrabberOpen(false);
-                lift(0);
+                liftPosition=0;
+                lift(liftPosition);
                 state = state.secondRam;
 
                 break;

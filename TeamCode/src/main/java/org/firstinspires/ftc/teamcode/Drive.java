@@ -52,9 +52,9 @@ public class Drive extends VirusMethods {
             autoBalance = !autoBalance;
             while(gamepad1.b);
         }
-        if (gamepad2.back){
+        if (gamepad2.dpad_right){
             mode = !mode;
-            while(gamepad2.back);
+            while(gamepad2.dpad_right);
         }
         if(autoBalance) {
             balance();
@@ -110,62 +110,65 @@ public class Drive extends VirusMethods {
 
             if (gamepad2.left_trigger>0.5) {
                 if(!bottomFullOpen){
-                    cube1.setPosition(.4);
-                    cube2.setPosition(.6);
+                    bottomGrabberOpen(true);
                     waitTime(200);
                     bottomFullOpen = true;
                 } else {
-                    cube1.setPosition(0.25);
-                    cube2.setPosition(.7);
+                    bottomGrabberOpen(false);
                     waitTime(200);
                     bottomFullOpen = false;
                 }
             }
             else if (gamepad2.right_trigger>0.5) {
-                cube1.setPosition(.6);
-                cube2.setPosition(.4);
+                bottomGrabberClose();
                 bottomFullOpen = false;
             }
             if (gamepad2.a) {
                 liftPosition = 0;
+                lift(liftPosition);
                 cube1.setPosition(0.25);
                 cube2.setPosition(.7);
                 bottomFullOpen = false;
             }
             else if (gamepad2.b && !gamepad2.start) {
-                liftPosition = (2200/3);
+                liftPosition = (2200/3*2);
+                lift(liftPosition);
                 if(grabberLeft.getPosition()<=.9&&liftPosition==0){
                     grabberLeft.setPosition(.9);
                     grabberRight.setPosition(.1);
                 }
             }
             else if (gamepad2.y) {
-                liftPosition = (3500/3);
+                liftPosition = (3500/3*2);
+                lift(liftPosition);
                 grabberLeft.setPosition(0);
                 grabberRight.setPosition(1);
                 grabberLeftSpin.setPower(0);
                 grabberRightSpin.setPower(0);
             }
             else if (gamepad2.x) {
-                liftPosition = (4400/3);
+                liftPosition = (4500/3*2);
+                lift(liftPosition);
                 grabberLeft.setPosition(0);
                 grabberRight.setPosition(1);
                 grabberLeftSpin.setPower(0);
                 grabberRightSpin.setPower(0);
             }
+            else if (0 != gamepad2.right_stick_y) {
+                if (liftLeft.getCurrentPosition()>4600/3*2) {
+                    lift(4490);
+                }
+                else if(liftLeft.getCurrentPosition()<=-50 ){
+                    lift(10);
+                }
+                else {
+                    liftPower(gamepad2.right_stick_y * -.5);
+                }
+            }
+
             if((grabberLeft.getPosition()==.9&&grabberRight.getPosition()==.1)&&(liftLeft.getCurrentPosition()>2100/3&&liftLeft.getCurrentPosition()>2100)){
                 grabberLeft.setPosition(1);
                 grabberRight.setPosition(0);
-            }
-            else if (0 != gamepad2.right_stick_y) {
-                if (liftLeft.getCurrentPosition()>4600) {
-                    lift(4490);
-                } else if(liftLeft.getCurrentPosition()<=-50 ){
-                    lift(10);
-                } else {
-                    liftPower(gamepad2.right_stick_y * -.5);
-                    liftPosition = liftRight.getCurrentPosition();
-                }
             }
 
             if (gamepad2.dpad_down) {
@@ -212,18 +215,13 @@ public class Drive extends VirusMethods {
             if (gamepad2.left_bumper) {
                 relicClaw.setPosition(0);
             }
-            if (gamepad2.left_trigger>0.5) {
+            if (gamepad2.left_trigger > 0.5) {
                 relicArm.setPosition(0.36);
-            }
-            else if (gamepad2.right_trigger>0.5) {
+            } else if (gamepad2.right_trigger > 0.5) {
                 relicArm.setPosition(1);
             } else {
 
             }
-        }
-
-        if(0==gamepad2.right_stick_y){
-            lift(liftPosition);
         }
 
         if (gamepad2.start && !gamepad2.b){
@@ -257,11 +255,21 @@ public class Drive extends VirusMethods {
         }else{
             counter = 0;
         } */
+        if (0 != gamepad2.left_stick_y) {
+            if (relicSlide.getCurrentPosition()<-3600) {
+                relicSlide(-3600);
+            } else if(relicSlide.getCurrentPosition()>10 ){
+                relicSlide(0);
+            } else {
+                relicSlidePower(gamepad2.left_stick_y);
+            }
+        }
 
-        relicSlide.setPower(gamepad2.left_stick_y * 0.25);
 
         telemetry.addData("Gyro Reading",  getZHeading());
         telemetry.addData("Mode", mode);
+        telemetry.addData("Back",gamepad2.back);
+        telemetry.addData("Relic Slide", relicSlide.getCurrentPosition());
         /*telemetry.addData("Top Grabber",GPS(false));
         telemetry.addData("Cryptobox Location (relative to robot)",cryptoboxLocation());
         telemetry.addData("liftLeft Encoder:", liftLeft.getCurrentPosition());

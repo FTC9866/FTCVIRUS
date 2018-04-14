@@ -119,7 +119,8 @@ public class RedAutonomous2 extends VirusMethods {
                 }
                 break;
             case toCryptoBoxpart1:
-                lift(2000);
+                liftPosition = (2200/3);
+                lift(liftPosition);
                 if (setMotorPositionsINCH(29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,29.5-amountMovedForward,0.5)) {
                     resetEncoder();
                     state=state.turn90;
@@ -172,7 +173,8 @@ public class RedAutonomous2 extends VirusMethods {
                 waitTime(400);
                 runMotors(0,0,0,0);
                 topGrabberOpen(false);
-                lift(0);
+                liftPosition=0;
+                lift(liftPosition);
                 state = state.secondRam;
 
                 break;

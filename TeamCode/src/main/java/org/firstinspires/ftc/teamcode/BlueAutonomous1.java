@@ -126,7 +126,8 @@ public class BlueAutonomous1 extends VirusMethods {
                 }
                 break;
             case toCryptoBox:
-                lift(2000); //so that cube doesn't drag on ground
+                liftPosition = (2200/3);
+                lift(liftPosition);
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT) {
                     if (setMotorPositionsINCH(-29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -29.6 - amountMovedForward, -.5)) {
                         resetEncoder();
@@ -168,7 +169,8 @@ public class BlueAutonomous1 extends VirusMethods {
                 waitTime(400);
                 runMotors(0, 0, 0, 0);
                 topGrabberOpen(false);
-                lift(0);
+                liftPosition=0;
+                lift(liftPosition);
 
                 state = state.secondRam;
 

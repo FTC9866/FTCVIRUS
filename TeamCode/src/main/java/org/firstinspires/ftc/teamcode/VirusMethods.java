@@ -193,37 +193,60 @@ public abstract class VirusMethods extends VirusHardware{
     }
 
     public void lift(double position) {
-        liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //liftLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftLeft.setPower(-1);
+        //liftLeft.setPower(-1);
         liftRight.setPower(-1);
-        liftLeft.setTargetPosition((int) position);
+        //liftLeft.setTargetPosition((int) position);
         liftRight.setTargetPosition((int) position);
-        if ((!liftLeft.isBusy())&&(!liftRight.isBusy())) {
-            liftLeft.setPower(0);
+        if ((!liftRight.isBusy())) {
             liftRight.setPower(0);
         }
     }
-
     public void liftPower(double power){
-        liftLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftLeft.setPower(power);
         liftRight.setPower(power);
+    }
+    public void relicSlide(int position){
+        relicSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        relicSlide.setPower(-1);
+        relicSlide.setTargetPosition(position);
+        if ((!relicSlide.isBusy())) {
+            relicSlide.setPower(0);
+        }
+    }
+
+    public void relicSlidePower(double power){
+        relicSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        relicSlide.setPower(power);
     }
     public void topGrabberOpen(boolean semi){
         if(semi){
-            cube3.setPosition(.55);
-            cube4.setPosition(.45);
+            cube3.setPosition(.7);
+            cube4.setPosition(.2);
         }else{
-            cube3.setPosition(.55);
-            cube4.setPosition(.45);
+            cube3.setPosition(.6);
+            cube4.setPosition(.3);
         }
 
     }
     public void topGrabberClose(){
-        cube3.setPosition(.7);
-        cube4.setPosition(.3);
+        cube3.setPosition(.8);
+        cube4.setPosition(.1);
+    }
+    public void bottomGrabberOpen(boolean semi){
+        if(semi){
+            cube1.setPosition(.5);
+            cube2.setPosition(.45);
+        }else{
+            cube1.setPosition(.3);
+            cube2.setPosition(.67);
+        }
+
+    }
+    public void bottomGrabberClose(){
+        cube1.setPosition(.55);
+        cube2.setPosition(.4);
     }
     public String GPS(boolean bottom){
         int bottomx;
@@ -263,7 +286,7 @@ public abstract class VirusMethods extends VirusHardware{
         }
     }
     public void jewelKnockerUp(){
-        jewelKnocker.setPosition(.1);
+        jewelKnocker.setPosition(.5);
     }
     public void jewelKnockerDown(){
         jewelKnocker.setPosition(0.66);

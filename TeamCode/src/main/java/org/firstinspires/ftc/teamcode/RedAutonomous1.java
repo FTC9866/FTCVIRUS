@@ -47,7 +47,7 @@ public class RedAutonomous1 extends VirusMethods {
     public void loop() {
         readVumark();
         updateOrientation();
-        lift(liftPosition);
+        //lift(liftPosition);
 
         switch (state) {
             case dropArm:
@@ -121,6 +121,7 @@ public class RedAutonomous1 extends VirusMethods {
                 break;
             case toCryptoBox:
                 liftPosition = (2200/3);
+                lift(liftPosition);
                 if (VuMarkStored == RelicRecoveryVuMark.LEFT){
                     if (setMotorPositionsINCH(45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward,45.5-amountMovedForward, .5)){ //amountMovedForward subtracted to remove the amount of space moved forward to scan vision target
                         resetEncoder();
@@ -151,7 +152,8 @@ public class RedAutonomous1 extends VirusMethods {
                 }
                 break;
             case placeGlyph:
-                lift(50);
+                liftPosition = 50;
+                lift(liftPosition);
                 if(setMotorPositionsINCH(7,7,7,7,.5)){
                     topGrabberOpen(true);
                     if (deltaT.seconds()<60){
@@ -199,6 +201,7 @@ public class RedAutonomous1 extends VirusMethods {
                     resetEncoder();
                     topGrabberOpen(false);
                     liftPosition = 10;
+                    lift(liftPosition);
                     state = state.turnAround;
                 }
                 break;
@@ -218,6 +221,7 @@ public class RedAutonomous1 extends VirusMethods {
                     cube3.setPosition(.6);
                     cube4.setPosition(.4);
                     liftPosition = (2200/3);
+                    lift(liftPosition);
                     state = state.backUp2;
                     resetEncoder();
                 }  //back up, retract spinners, turn around, drop off
